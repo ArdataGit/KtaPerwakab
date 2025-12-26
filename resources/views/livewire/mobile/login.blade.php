@@ -114,8 +114,9 @@ $submit = function () {
                     :invalid="$snackbar['type'] === 'error' && !$email" :errorMessage="$snackbar['type'] === 'error' && !$email ? 'Email wajib diisi' : null" />
 
                 {{-- PASSWORD --}}
-                <x-mobile.input wire:model.defer="password" placeholder="Password" type="password" icon="bi-eye"
+                <x-mobile.input wire:model.defer="password" placeholder="Password" type="password"
                     :invalid="$snackbar['type'] === 'error' && !$password" :errorMessage="$snackbar['type'] === 'error' && !$password ? 'Password wajib diisi' : null" />
+
 
                 {{-- BUTTON LOGIN --}}
                 <x-mobile.button class="mt-4" wire:click="submit">

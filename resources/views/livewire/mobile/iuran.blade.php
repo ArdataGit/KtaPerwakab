@@ -81,8 +81,8 @@ $submit = function () {
     {{-- 🔔 SNACKBAR --}}
     @if($snackbar['message'])
         <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[390px] z-[9999]
-                       {{ $snackbar['type'] === 'error' ? 'bg-red-500' : 'bg-green-600' }}
-                       text-white px-4 py-3 text-sm font-medium shadow-lg rounded-b-lg">
+                           {{ $snackbar['type'] === 'error' ? 'bg-red-500' : 'bg-green-600' }}
+                           text-white px-4 py-3 text-sm font-medium shadow-lg rounded-b-lg">
             {{ $snackbar['message'] }}
         </div>
     @endif
@@ -135,9 +135,24 @@ $submit = function () {
                 </label>
 
                 {{-- INPUT CUSTOM --}}
-                <input x-show="type === 'custom'" x-transition type="number" min="240001"
-                    wire:model.defer="nominal_custom" placeholder="Minimal Rp240.001" class="w-full border rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:ring focus:ring-green-200">
+                {{-- INPUT CUSTOM (RUPIAH FORMAT) --}}
+                <div x-show="type === 'custom'" x-transition x-data="{
+        raw: @entangle('nominal_custom'),
+        format(val) {
+            if (!val) return '';
+            val = val.toString().replace(/[^0-9]/g, '');
+            return val.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        },
+        onInput(e) {
+            let numbers = e.target.value.replace(/[^0-9]/g, '');
+            this.raw = numbers;
+            e.target.value = this.format(numbers);
+        }
+    }">
+                    <input type="text" inputmode="numeric" placeholder="Minimal Rp240.001" class="w-full border rounded-lg px-3 py-2 text-sm
+               focus:outline-none focus:ring focus:ring-green-200" @input="onInput($event)" :value="format(raw)" />
+                </div>
+
             </div>
 
             {{-- PETUNJUK --}}
