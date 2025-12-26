@@ -82,6 +82,16 @@ Route::middleware('mobile.auth')->group(function () {
     Volt::route('/tukar-poin/{id}', 'mobile.poin.detail')
         ->name('mobile.poin.detail');
 
+
+    Volt::route('/donation-campaign', 'mobile.donation.index')
+        ->name('mobile.donation.index');
+    Volt::route('/donation-campaign/{id}', 'mobile.donation.detail')
+        ->name('mobile.donation.detail');
+    Volt::route(
+        '/donation-campaign/{id}/checkout',
+        'mobile.donation.checkout'
+    )->name('mobile.donation.checkout');
+
     Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
 
         $token = session('token');

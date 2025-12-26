@@ -142,7 +142,7 @@ mount(function () {
 
     {{-- HERO --}}
     <x-mobile.home.hero :name="$user['name'] ?? 'Pengguna'" :photo="$user['profile_photo'] ?? null"
-        :fullname="$user['name'] ?? 'Pengguna'" :city="$user['city'] ?? 'Kota Anda'" :region="$user['region'] ?? 'Provinsi Anda'" />
+        :fullname="$user['name'] ?? 'Pengguna'" :city="$user['city'] ?? 'Kota Anda'" :role="$user['role'] ?? 'User'" />
 
     {{-- MENU --}}
     <x-mobile.home.menu :items="[

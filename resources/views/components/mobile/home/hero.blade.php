@@ -2,7 +2,7 @@
     'name' => 'Pengguna',
     'fullname' => null,
     'city' => 'Kota Anda',
-    'region' => 'Provinsi Anda',
+    'role' => 'User',
     'photo' => null,   // URL foto profil, null = default avatar
 ])
 
@@ -26,32 +26,35 @@
         </div>
 
         {{-- Profile Picture --}}
-        <div class="w-12 h-12 rounded-full bg-white shadow overflow-hidden flex items-center justify-center">
+        <a href="{{ url('/profile/edit') }}"
+        class="w-12 h-12 rounded-full bg-white shadow overflow-hidden flex items-center justify-center
+                hover:ring-2 hover:ring-white transition"
+        title="Edit Profil">
+
             <img 
                 src="{{ $avatar }}" 
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover cursor-pointer"
                 alt="Foto Profil"
             >
-        </div>
+
+        </a>
+
 
     </div>
-
-    {{-- Location Selector --}}
+    {{-- User Status --}}
     <div class="mt-5 bg-white rounded-xl px-4 py-3 flex items-center justify-between shadow">
 
         <div class="flex items-center space-x-2">
-            <span class="text-red-500">
-                <i class="bi bi-geo-alt-fill text-red-500 text-lg"></i>
-             </span>
+            <span class="text-green-600">
+                <i class="bi bi-shield-check text-green-600 text-lg"></i>
+            </span>
 
             <p class="text-gray-700 text-sm font-medium">
-                {{ $city }}, {{ $region }}
+                Status Anda: <span class="font-semibold">{{ ucfirst($role) }}</span>
             </p>
         </div>
 
-        <button class="text-green-700 font-semibold text-sm">
-            Ganti
-        </button>
     </div>
+
 
 </div>
