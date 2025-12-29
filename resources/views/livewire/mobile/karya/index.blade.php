@@ -1,25 +1,43 @@
 <?php
 
 use App\Services\PublikasiApiService;
-use function Livewire\Volt\state;
-use function Livewire\Volt\mount;
+use function Livewire\Volt\{state, mount, updated};
 
 state([
     'publikasi' => [],
+    'search' => '',
 ]);
 
 mount(function () {
     $response = PublikasiApiService::list([
-        'per_page' => 10
+        'per_page' => 10,
+        'search' => $this->search ?: null,
     ]);
 
     if ($response->successful()) {
         $this->publikasi = $response->json('data.data') ?? [];
-    } else {
-        $this->publikasi = [];
     }
 });
+
+
+updated([
+    'search' => function () {
+
+        $response = PublikasiApiService::list([
+            'per_page' => 10,
+            'search' => $this->search ?: null,
+        ]);
+
+        if ($response->successful()) {
+            $this->publikasi = $response->json('data.data') ?? [];
+        } else {
+            $this->publikasi = [];
+        }
+    },
+]);
+
 ?>
+
 
 <x-layouts.mobile title="Publikasi">
 
@@ -42,12 +60,13 @@ mount(function () {
 
         <!-- SEARCH (UI ONLY) -->
         <div class="flex items-center space-x-2">
-            <input type="text" placeholder="Cari karya"
-                class="flex-1 px-4 py-2 rounded-full border text-sm focus:ring focus:ring-green-200">
-
-            <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                Tampilkan
-            </button>
+            <input
+    type="text"
+    wire:model.live="search"
+    placeholder="Cari karya"
+    class="flex-1 px-4 py-2 rounded-full border text-sm
+           focus:outline-none focus:ring focus:ring-green-200"
+/>
         </div>
 
         <!-- PUBLIKASI GRID -->

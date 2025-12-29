@@ -1,30 +1,42 @@
 <?php
 
 use App\Services\MarketplaceApiService;
-use function Livewire\Volt\state;
-use function Livewire\Volt\mount;
+use function Livewire\Volt\{state, mount, updated};
 
 state([
     'products' => [],
+    'search' => '',
 ]);
 
 mount(function () {
-    $response = MarketplaceApiService::products();
-    // dd([
-    //     'status' => $response->status(),
-    //     'successful' => $response->successful(),
-    //     'headers' => $response->headers(),
-    //     'raw_body' => $response->body(),
-    //     'json' => $response->json(),
-    //     'data_data' => $response->json('data.data'),
-    // ]);
+    $response = MarketplaceApiService::products([
+        'per_page' => 10,
+        'search' => $this->search ?: null,
+    ]);
+
     if ($response->successful()) {
         $this->products = $response->json('data.data') ?? [];
     } else {
         $this->products = [];
     }
 });
+
+updated([
+    'search' => function () {
+        $response = MarketplaceApiService::products([
+            'per_page' => 10,
+            'search' => $this->search ?: null,
+        ]);
+
+        if ($response->successful()) {
+            $this->products = $response->json('data.data') ?? [];
+        } else {
+            $this->products = [];
+        }
+    },
+]);
 ?>
+
 
 @php
     $image = api_product_url($product['photos'][0]['file_path'] ?? null);
@@ -51,12 +63,13 @@ mount(function () {
 
         <!-- SEARCH (UI ONLY dulu) -->
         <div class="flex items-center space-x-2">
-            <input type="text" placeholder="Cari produk UMKM"
-                class="flex-1 px-4 py-2 rounded-full border text-sm focus:ring focus:ring-green-200">
-
-            <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                Tampilkan
-            </button>
+            <input
+                type="text"
+                wire:model.live="search"
+                placeholder="Cari produk UMKM"
+                class="flex-1 px-4 py-2 rounded-full border text-sm
+                       focus:outline-none focus:ring focus:ring-green-200"
+            >
         </div>
 
         <!-- PRODUCT GRID -->

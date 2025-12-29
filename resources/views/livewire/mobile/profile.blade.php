@@ -80,7 +80,7 @@ state([
 
                 {{-- Tukar Poin (ANGGOTA ONLY) --}}
                 @if($role === 'anggota')
-                    <a href="#" class="flex items-center justify-between px-4 py-4">
+                    <a href="/poin-saya" class="flex items-center justify-between px-4 py-4">
                         <div class="flex items-center space-x-3">
                             <img src="/images/assets/icon/point.svg" class="w-5 h-5">
                             <span class="text-sm font-medium">Tukar Poin</span>

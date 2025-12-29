@@ -37,7 +37,7 @@
                 <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
 
                     {{-- ============= FRONT SIDE ============= --}}
-                    <div class="face face-front bg-white rounded-2xl shadow-lg overflow-hidden relative">
+                    <div class="face face-front bg-white rounded-2xl shadow-lg overflow-hidden ">
                         <img src="/images/assets/kta/kta_depan.png" class="w-full object-contain">
 
                         {{-- FOTO USER --}}
@@ -65,7 +65,7 @@
 
                     {{-- ============= BACK SIDE ============= --}}
                     {{-- ============= BACK SIDE ============= --}}
-                    <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden relative">
+                    <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden ">
 
                         {{-- TEMPLATE BACKGROUND --}}
                         <img src="/images/assets/kta/kta_belakang.png" class="w-full object-contain">

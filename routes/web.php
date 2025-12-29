@@ -87,6 +87,8 @@ Route::middleware('mobile.auth')->group(function () {
         ->name('mobile.donation.index');
     Volt::route('/donation-campaign/{id}', 'mobile.donation.detail')
         ->name('mobile.donation.detail');
+    Volt::route('/donation-campaign/{id}/histories', 'mobile.donation.histories')
+        ->name('mobile.donation.histories');
     Volt::route(
         '/donation-campaign/{id}/checkout',
         'mobile.donation.checkout'
