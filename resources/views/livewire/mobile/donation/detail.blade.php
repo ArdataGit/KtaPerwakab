@@ -10,7 +10,8 @@ state([
     'campaign' => null,
 
     // form
-    'amount' => '',
+    'amount' => 0,
+    'amount_display' => '',
     'payment_method' => '',
     'donor_name' => '',
     'donor_email' => '',
@@ -18,6 +19,9 @@ state([
 
     'paymentMethods' => [],
 ]);
+$formatAmount = function ($value) {
+    return number_format((int) $value, 0, ',', '.');
+};
 
 mount(function ($id) {
 
@@ -28,10 +32,12 @@ mount(function ($id) {
     }
 
     // PAYMENT METHODS (Tripay)
-    // $paymentRes = TripayApiService::paymentMethods();
-    // if ($paymentRes->successful()) {
-    //     $this->paymentMethods = $paymentRes->json('data') ?? [];
-    // }
+     $paymentRes = TripayApiService::paymentMethods();
+  
+  //dd($paymentRes);
+     if ($paymentRes->successful()) {
+         $this->paymentMethods = $paymentRes->json('data') ?? [];
+     }
 });
 
 /**
@@ -39,12 +45,13 @@ mount(function ($id) {
  */
 $submit = function () {
 
-    $this->validate([
-        'amount' => 'required|numeric|min:1000',
-        'payment_method' => 'required',
-        'donor_name' => 'nullable|string|max:191',
-        'donor_email' => 'nullable|email|max:191',
-    ]);
+  $this->validate([
+      'amount' => 'required|numeric|min:20000',
+      'payment_method' => 'required',
+      'donor_name' => 'nullable|string|max:191',
+      'donor_email' => 'nullable|email|max:191',
+  ]);
+
 
     $response = DonationApiService::donate([
         'campaign_id' => $this->campaign['id'],
@@ -55,11 +62,21 @@ $submit = function () {
     ]);
 
     if ($response->successful()) {
-        return redirect($response->json('data.payment_url'));
-    }
 
-    $this->addError('submit', 'Gagal membuat donasi, silakan coba lagi');
+        $donationId = $response->json('data.donation_id');
+
+        return redirect()->route(
+            'mobile.donation.checkout',
+            ['id' => $donationId]
+        );
+    }
+  dd([
+    'status' => $response->status(),
+    'body'   => $response->body(),
+    'json'   => $response->json(),
+]);
 };
+
 ?>
 
 <x-layouts.mobile title="Donasi">
@@ -80,10 +97,11 @@ $submit = function () {
         </div>
 
         {{-- FORM CARD --}}
-        <div class="relative -mt-12 bg-white rounded-t-[28px] px-4 pt-6 pb-8 space-y-6">
+        <div class="relative -mt-14 bg-white rounded-t-[28px] px-4 pt-6 pb-8 space-y-6">
+
 
             {{-- TITLE --}}
-            <p class="font-bold text-lg text-gray-900">
+            <p class="font-bold text-base text-gray-900 leading-snug">
                 {{ $campaign['title'] }}
             </p>
 
@@ -93,16 +111,34 @@ $submit = function () {
                     Masukkan Nominal Donasi
                 </p>
 
-                <div class="flex items-center border-2 border-gray-300 rounded-2xl px-4 py-3">
+                <div class="flex items-center border-2 border-gray-300 rounded-2xl px-4 py-3 focus-within:border-green-500">
                     <span class="text-base font-semibold mr-2">Rp</span>
-                    <input type="number" wire:model="amount" placeholder="Masukkan nominal donasi Anda"
-                        class="w-full focus:outline-none text-base">
+
+                    <input
+                        type="text"
+                        inputmode="numeric"
+                        placeholder="Minimal Rp20.000"
+                        value="{{ $amount_display }}"
+                        class="w-full focus:outline-none text-base"
+                        wire:ignore
+                        oninput="
+                            let raw = this.value.replace(/\D/g,'');
+                            this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                            @this.set('amount', raw);
+                            @this.set('amount_display', this.value);
+                        "
+                    >
                 </div>
+
+                <p class="text-xs text-gray-500 mt-1">
+                    Minimal donasi Rp20.000
+                </p>
 
                 @error('amount')
                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
+			<hr class="border-gray-100">
 
             {{-- PAYMENT METHOD --}}
             <div>
@@ -110,14 +146,17 @@ $submit = function () {
                     Pilih Metode Pembayaran
                 </p>
 
-                <select wire:model="payment_method" class="w-full border-2 border-gray-300 rounded-2xl px-4 py-3 text-base">
+                <select
+                  wire:model="payment_method"
+                  class="w-full border-2 border-gray-300 rounded-2xl px-4 py-3 text-base focus:border-green-500 focus:ring-0">
+
                     <option value="">-- Pilih --</option>
-                    <option value="bcava">bca</option>
-                    <!-- @foreach ($paymentMethods as $method)
+                    <!--<option value="bcava">bca</option>-->
+                     @foreach ($paymentMethods as $method)
                         <option value="{{ $method['code'] }}">
                             {{ $method['name'] }}
                         </option>
-                    @endforeach -->
+                    @endforeach
                 </select>
 
                 @error('payment_method')
@@ -149,10 +188,11 @@ $submit = function () {
             </div>
 
             {{-- SUBMIT --}}
-            <button onclick="window.location.href='{{ route('mobile.donation.checkout', $campaign['id']) }}'"
+            <button wire:click="submit"
                 class="w-full bg-green-600 text-white font-semibold py-4 rounded-2xl text-base">
                 Lanjutkan Donasi
             </button>
+
 
             @error('submit')
                 <p class="text-xs text-red-500 text-center mt-2">

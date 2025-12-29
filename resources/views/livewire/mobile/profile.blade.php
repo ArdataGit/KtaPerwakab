@@ -59,7 +59,7 @@ state([
                 </a>
 
                 {{-- Riwayat Donasi --}}
-                <a href="#" class="flex items-center justify-between px-4 py-4">
+                <a href="/my-donation" class="flex items-center justify-between px-4 py-4">
                     <div class="flex items-center space-x-3">
                         <img src="/images/assets/icon/riwayat-donasi.svg" class="w-5 h-5">
                         <span class="text-sm font-medium">Riwayat Donasi</span>

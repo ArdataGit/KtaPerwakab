@@ -91,6 +91,8 @@ Route::middleware('mobile.auth')->group(function () {
         '/donation-campaign/{id}/checkout',
         'mobile.donation.checkout'
     )->name('mobile.donation.checkout');
+    Volt::route('/my-donation', 'mobile.donation.my')
+        ->name('mobile.donation.index');
 
     Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
 
