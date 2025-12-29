@@ -166,8 +166,8 @@ mount(function () {
         ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
         ['icon' => 'karya', 'label' => 'KARYA & BISNIS', 'route' => route('mobile.karya.index')],
         ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
-        ['icon' => 'Info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
-        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI'],
+        ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
+        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
         ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
         ['icon' => 'poin', 'label' => 'POINT', 'route' => route('mobile.poin.index')],
     ]" />
