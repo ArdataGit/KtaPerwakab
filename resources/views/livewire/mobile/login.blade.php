@@ -124,9 +124,11 @@ $submit = function () {
                 </x-mobile.button>
 
                 {{-- FORGOT --}}
-                <x-mobile.button hex="#E6E6E6" text="#50555C" class="mt-3">
-                    Lupa Password
-                </x-mobile.button>
+                <a href="/forgot-password">
+                    <x-mobile.button hex="#E6E6E6" text="#50555C" class="mt-3">
+                        Lupa Password
+                    </x-mobile.button>
+                </a>
 
                 {{-- REGISTER --}}
                 <p class="text-center text-sm mt-3 text-black">

@@ -151,7 +151,7 @@ mount(function () {
         ['icon' => 'karya', 'label' => 'KARYA & BISNIS', 'route' => route('mobile.karya.index')],
         ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
         ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
-        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI'],
+        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
         ['icon' => 'donasi', 'label' => 'DONASI'],
         ['icon' => 'poin', 'label' => 'POINT'],
     ]" />

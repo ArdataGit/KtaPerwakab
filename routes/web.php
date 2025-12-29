@@ -16,6 +16,8 @@ Route::middleware('mobile.guest')->group(function () {
     Volt::route('/auth', 'mobile.auth.landing')->name('auth.landing');
     Volt::route('/login', 'mobile.login')->name('mobile.login');
     Volt::route('/register', 'mobile.register')->name('mobile.register');
+    Volt::route('/forgot-password', 'mobile.forgot-password')->name('mobile.forgot-password');
+    Volt::route('/reset-password', 'mobile.reset-password')->name('mobile.reset-password');
 
 });
 
@@ -42,6 +44,9 @@ Route::middleware('mobile.auth')->group(function () {
     // PROFILE
     Volt::route('/profile', 'mobile.profile')->name('mobile.profile');
     Volt::route('/profile/edit', 'mobile.profile-edit')->name('mobile.profile.edit');
+
+    // STRUKTUR ORGANISASI
+    Volt::route('/struktur-organisasi', 'mobile.struktur-organisasi')->name('mobile.struktur-organisasi');
 
     // ARTICLE
     Volt::route('/articles', 'mobile.article')->name('mobile.articles');
