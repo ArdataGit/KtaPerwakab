@@ -90,7 +90,7 @@ state([
                 @endif
 
                 {{-- Produk Saya --}}
-                <a href="#" class="flex items-center justify-between px-4 py-4">
+                <a href="{{ route('mobile.my-products.index') }}" class="flex items-center justify-between px-4 py-4">
                     <div class="flex items-center space-x-3">
                         <img src="/images/assets/icon/produk.svg" class="w-5 h-5">
                         <span class="text-sm font-medium">Produk Saya</span>

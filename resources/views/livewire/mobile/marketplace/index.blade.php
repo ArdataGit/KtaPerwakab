@@ -94,7 +94,7 @@ updated([
                         </p>
 
                         <p class="text-xs text-gray-500">
-                            {{ $product['umkm']['umkm_name'] ?? '-' }}
+                            {{ $product['umkm']['user']['name'] ?? '-' }}
                         </p>
 
                         <p class="text-green-600 font-bold text-sm">

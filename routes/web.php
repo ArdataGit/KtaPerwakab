@@ -66,6 +66,11 @@ Route::middleware('mobile.auth')->group(function () {
     // KTA
     Volt::route('/kta', 'mobile.kta')->name('mobile.kta');
 
+    // MY PRODUCTS
+    Volt::route('/my-product', 'mobile.my-products.index')->name('mobile.my-products.index');
+    Volt::route('/my-product/create', 'mobile.my-products.create')->name('mobile.my-products.create');
+    Volt::route('/my-product/{id}/edit', 'mobile.my-products.edit')->name('mobile.my-products.edit');
+
     // IURAN
     Volt::route('/iuran', 'mobile.iuran')->name('mobile.iuran');
     Volt::route('/iuran/metode', 'mobile.iuran-metode')->name('mobile.iuran.metode');
