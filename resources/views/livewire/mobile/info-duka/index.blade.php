@@ -39,20 +39,32 @@ mount(fn() => $this->load());
     <div class="px-4 mt-4 space-y-4">
 
         {{-- SEARCH + FILTER --}}
-        <div class="flex gap-2">
-            <input wire:model.defer="q" placeholder="Cari nama" class="flex-1 px-4 py-2 rounded-full border text-sm">
+        <div class="flex gap-2 w-full max-w-full overflow-x-hidden">
 
-            <select wire:model.defer="year" class="px-3 py-2 rounded-full border text-sm">
-                <option value="">Tahun</option>
-                @for ($y = now()->year; $y >= 2018; $y--)
-                    <option value="{{ $y }}">{{ $y }}</option>
-                @endfor
-            </select>
+          <input
+              wire:model.defer="q"
+              placeholder="Cari nama"
+              class="flex-1 min-w-0 px-4 py-2 rounded-full border text-sm"
+          >
 
-            <button wire:click="load" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm">
-                Cari
-            </button>
-        </div>
+          <select
+              wire:model.defer="year"
+              class="w-[90px] max-w-[90px] px-3 py-2 rounded-full border text-sm"
+          >
+              <option value="">Tahun</option>
+              @for ($y = now()->year; $y >= 2018; $y--)
+                  <option value="{{ $y }}">{{ $y }}</option>
+              @endfor
+          </select>
+
+          <button
+              wire:click="load"
+              class="shrink-0 bg-green-600 text-white px-4 py-2 rounded-full text-sm"
+          >
+              Cari
+          </button>
+      </div>
+
 
         {{-- GRID --}}
         <div class="grid grid-cols-2 gap-4">

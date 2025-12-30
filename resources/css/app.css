@@ -101,6 +101,12 @@ select:focus[data-flux-control] {
     }
 }
 
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
 .dropdown-enter {
     animation: dropdown-fade 0.18s ease-out forwards;
 }
@@ -132,11 +138,28 @@ select:focus[data-flux-control] {
 .perspective {
     perspective: 1200px;
 }
-
 .kta-actions {
     position: relative;
     z-index: 10;
+
+    /* default (mobile) */
+    margin-top: 24px;
 }
+
+/* Tablet */
+@media (min-width: 640px) {
+    .kta-actions {
+        margin-top: 32px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .kta-actions {
+        margin-top: 48px;
+    }
+}
+
 
 .flipper {
     position: relative;

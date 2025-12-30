@@ -9,6 +9,38 @@ use App\Services\AuthApiService;
 |--------------------------------------------------------------------------
 */
 Volt::route('/', 'mobile.splash')->name('mobile.splash');
+// routes/web.php
+Route::get('/pdf-proxy', function () {
+    $url = request('url');
+
+    abort_unless(filter_var($url, FILTER_VALIDATE_URL), 404);
+
+    return response()->stream(function () use ($url) {
+        echo file_get_contents($url);
+    }, 200, [
+        'Content-Type' => 'application/pdf',
+        'X-Frame-Options' => 'SAMEORIGIN',
+    ]);
+});
+
+// routes/web.php
+Route::get('/iframe-proxy', function () {
+    $url = request('url');
+
+    abort_unless(
+        $url && filter_var($url, FILTER_VALIDATE_URL),
+        404
+    );
+
+    return response()->stream(function () use ($url) {
+        echo file_get_contents($url);
+    }, 200, [
+        'Content-Type' => 'text/html',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'Content-Security-Policy' => "frame-ancestors 'self'",
+    ]);
+})->name('iframe.proxy');
+
 Route::middleware('mobile.guest')->group(function () {
 
     Volt::route('/onboarding', 'mobile.onboarding')->name('mobile.onboarding');
@@ -67,9 +99,20 @@ Route::middleware('mobile.auth')->group(function () {
     Volt::route('/karya', 'mobile.karya.index')
         ->name('mobile.karya.index');
 
-    // Marketplace Detail Produk
+    // karya Detail Produk
     Volt::route('/karya/{id}', 'mobile.karya.show')
         ->name('mobile.karya.show');
+  
+  
+      // Explore Bisnis (List)
+    Volt::route('/explore-bisnis', 'mobile.bisnis.explore')
+        ->name('mobile.bisnis.explore');
+
+    // Detail Bisnis (by SLUG)
+    Volt::route('/bisnis/{slug}', 'mobile.bisnis.show')
+        ->name('mobile.bisnis.show');
+  
+  
     // Info Duka
     Volt::route('/info-duka', 'mobile.info-duka.index')
         ->name('mobile.info-duka.index');

@@ -32,7 +32,8 @@
             class="w-full flex flex-col items-center">
 
             {{-- KTA CONTAINER --}}
-            <div class="relative perspective w-[280px] max-w-full h-[96] md:h-[480px]">
+            <div class="relative perspective w-[280px] max-w-full h-[440px] md:h-[480px]">
+
 
                 <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
 
@@ -109,7 +110,7 @@
             </div>
 
             {{-- ACTION BUTTONS --}}
-            <div class="mt-6 flex justify-center space-x-6 kta-actions">
+            <div class="flex justify-center space-x-6 kta-actions">
                 <button class="bg-green-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-md">
                     <img src="/images/assets/icon/download.svg" class="w-6 h-6">
                 </button>
@@ -125,6 +126,28 @@
     </div>
 
     <div class="h-20"></div>
+	<style>
+      .kta-actions {
+            position: relative;
+            z-index: 10;
 
-    <x-mobile.navbar active="home" />
+            /* default (mobile) */
+            margin-top: 31rem;
+        }
+
+        /* Tablet */
+        @media (min-width: 640px) {
+            .kta-actions {
+                margin-top: 28px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .kta-actions {
+                margin-top: 41px;
+            }
+        }
+  	</style>
+  <x-mobile.navbar active="home" />
 </x-layouts.mobile>

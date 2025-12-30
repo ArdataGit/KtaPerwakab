@@ -103,7 +103,10 @@ mount(function () {
                 {{-- Tampilan untuk PDF --}}
                 <div class="space-y-4">
                     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                        <iframe src="{{ $fileUrl }}" class="w-full h-[500px] border-0"></iframe>
+                        <iframe 
+                            src="/pdf-proxy?url={{ urlencode($fileUrl) }}" 
+                            class="w-full h-[500px] border-0">
+                        </iframe>
                     </div>
 
                     <a href="{{ $fileUrl }}" target="_blank"
