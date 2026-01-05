@@ -87,81 +87,83 @@ mount(function () {
 
 
 <x-layouts.mobile title="Beranda">
-    <!-- {{  $expiredAt}}
-    {{  $today}} -->
-    @if($showIuranPopup)
-        <div x-data="{ open: true }" x-show="open" x-transition
-            class="fixed inset-0 z-100 flex items-center justify-center bg-black/50 px-4">
-            <div class="bg-white rounded-2xl w-full max-w-sm p-5 text-center">
+    <div>
+        <!-- {{  $expiredAt}}
+        {{  $today}} -->
+        @if($showIuranPopup)
+            <div x-data="{ open: true }" x-show="open" x-transition
+                class="fixed inset-0 z-100 flex items-center justify-center bg-black/50 px-4">
+                <div class="bg-white rounded-2xl w-full max-w-sm p-5 text-center">
 
-                <div class="mb-4">
-                    <img src="/images/assets/iuran.png" class="mx-auto w-20">
+                    <div class="mb-4">
+                        <img src="/images/assets/iuran.png" class="mx-auto w-20">
+                    </div>
+
+                    {{-- JUDUL --}}
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        @if($isFirstIuran)
+                            Wajib Iuran Tahunan Pertama
+                        @elseif($isExpired)
+                            Keanggotaan Anda Telah Berakhir
+                        @else
+                            Iuran Tahunan Akan Segera Berakhir
+                        @endif
+                    </h3>
+
+                    {{-- DESKRIPSI --}}
+                    <p class="text-sm text-gray-600 mb-5">
+                        @if($isFirstIuran)
+                            Untuk mengaktifkan status keanggotaan Anda, silakan lakukan iuran tahunan pertama.
+                        @elseif($isExpired)
+                            Masa berlaku keanggotaan Anda telah habis. Segera lakukan iuran agar tetap aktif.
+                        @else
+                            Masa berlaku keanggotaan Anda akan berakhir dalam waktu dekat. Segera lakukan iuran.
+                        @endif
+                    </p>
+
+                    <a href="{{ route('mobile.iuran') }}"
+                        class="block w-full bg-green-600 text-white py-3 rounded-xl font-semibold mb-3">
+                        @if($isFirstIuran)
+                            Bayar Iuran Pertama
+                        @else
+                            Iuran Sekarang
+                        @endif
+                    </a>
+
+                    {{-- CLOSE BUTTON (HANYA JIKA BOLEH) --}}
+                    @if($closablePopup)
+                        <button @click="open = false" class="text-sm text-gray-500">
+                            Nanti Saja
+                        </button>
+                    @endif
+
                 </div>
-
-                {{-- JUDUL --}}
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">
-                    @if($isFirstIuran)
-                        Wajib Iuran Tahunan Pertama
-                    @elseif($isExpired)
-                        Keanggotaan Anda Telah Berakhir
-                    @else
-                        Iuran Tahunan Akan Segera Berakhir
-                    @endif
-                </h3>
-
-                {{-- DESKRIPSI --}}
-                <p class="text-sm text-gray-600 mb-5">
-                    @if($isFirstIuran)
-                        Untuk mengaktifkan status keanggotaan Anda, silakan lakukan iuran tahunan pertama.
-                    @elseif($isExpired)
-                        Masa berlaku keanggotaan Anda telah habis. Segera lakukan iuran agar tetap aktif.
-                    @else
-                        Masa berlaku keanggotaan Anda akan berakhir dalam waktu dekat. Segera lakukan iuran.
-                    @endif
-                </p>
-
-                <a href="{{ route('mobile.iuran') }}"
-                    class="block w-full bg-green-600 text-white py-3 rounded-xl font-semibold mb-3">
-                    @if($isFirstIuran)
-                        Bayar Iuran Pertama
-                    @else
-                        Iuran Sekarang
-                    @endif
-                </a>
-
-                {{-- CLOSE BUTTON (HANYA JIKA BOLEH) --}}
-                @if($closablePopup)
-                    <button @click="open = false" class="text-sm text-gray-500">
-                        Nanti Saja
-                    </button>
-                @endif
-
             </div>
-        </div>
-    @endif
+        @endif
 
-    {{-- HERO --}}
-    <x-mobile.home.hero :name="$user['name'] ?? 'Pengguna'" :photo="$user['profile_photo'] ?? null"
-        :fullname="$user['name'] ?? 'Pengguna'" :city="$user['city'] ?? 'Kota Anda'" :role="$user['role'] ?? 'User'" />
+        {{-- HERO --}}
+        <x-mobile.home.hero :name="$user['name'] ?? 'Pengguna'" :photo="$user['profile_photo'] ?? null"
+            :fullname="$user['name'] ?? 'Pengguna'" :city="$user['city'] ?? 'Kota Anda'" :role="$user['role'] ?? 'User'" />
 
-    {{-- MENU --}}
-    <x-mobile.home.menu :items="[
-        ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')],
-        ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
-        ['icon' => 'karya', 'label' => 'KARYA & BISNIS', 'route' => route('mobile.karya.index')],
-        ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
-        ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
-        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
-        ['icon' => 'donasi', 'label' => 'DONASI'],
-        ['icon' => 'poin', 'label' => 'POINT'],
-    ]" />
+        {{-- MENU --}}
+        <x-mobile.home.menu :items="[
+            ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')],
+            ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
+            ['icon' => 'karya', 'label' => 'KARYA & BISNIS', 'route' => route('mobile.karya.index')],
+            ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
+            ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
+            ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
+            ['icon' => 'donasi', 'label' => 'DONASI'],
+            ['icon' => 'poin', 'label' => 'POINT'],
+        ]" />
 
-    {{-- BANNER --}}
-    <x-mobile.home.banner />
+        {{-- BANNER --}}
+        <x-mobile.home.banner />
 
-    {{-- ARTICLE --}}
-    <x-mobile.home.article-card image="/images/assets/default-article.png"
-        title="Ingin Berorganisasi? Ini Cara Berorganisasi" link="#" />
+        {{-- ARTICLE --}}
+        <x-mobile.home.article-card image="/images/assets/default-article.png"
+            title="Ingin Berorganisasi? Ini Cara Berorganisasi" link="#" />
 
-    <x-mobile.navbar active="home" />
+        <x-mobile.navbar active="home" />
+    </div>
 </x-layouts.mobile>

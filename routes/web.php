@@ -30,6 +30,23 @@ Route::middleware('mobile.auth')->group(function () {
 
     // Home
     Volt::route('/home', 'mobile.home')->name('mobile.home');
+    
+    // Proxy endpoint untuk banner (menghindari CORS)
+    Route::get('/api/banners', function () {
+        $response = \App\Services\BannerApiService::getBanners();
+        
+        if ($response->successful()) {
+            return response()->json($response->json());
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal mengambil data banner',
+            'data' => []
+        ], 500);
+    })->name('api.banners');
+    
+    Volt::route('/banner/{id}', 'mobile.banner.show')->name('mobile.banner.show');
 
     // KTA
     Volt::route('/kta', 'mobile.kta')->name('mobile.kta');

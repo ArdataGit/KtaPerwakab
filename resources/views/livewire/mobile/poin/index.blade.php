@@ -28,11 +28,20 @@ $load = function () {
     ]);
 
     if ($resTambah->successful()) {
-        // ✅ LIST RIWAYAT (INI YANG BENAR)
-        $this->historyTambah = $resTambah->json('data.data') ?? [];
-
-        // ✅ SALDO
-        $this->saldo = (int) ($resTambah->json('user.saldo_point') ?? 0);
+        // Response langsung berupa array
+        $data = $resTambah->json();
+        
+        if (is_array($data)) {
+            $this->historyTambah = $data;
+            
+            // Ambil saldo dari user session atau item pertama jika ada
+            if (!empty($data) && isset($data[0]['user_saldo'])) {
+                $this->saldo = (int) $data[0]['user_saldo'];
+            } else {
+                // Fallback ke session user jika ada
+                $this->saldo = (int) ($this->user['saldo_point'] ?? 0);
+            }
+        }
     }
 
     if ($resTukar->successful()) {
@@ -105,17 +114,22 @@ mount(fn() => $this->load());
             @if ($tab === 'tambah')
                 @forelse ($historyTambah as $item)
                     <div class="flex justify-between items-start text-sm">
-                        <div>
+                        <div class="flex-1">
                             <p class="font-semibold text-gray-800">
-                                {{ $item['point_kategori']['name'] ?? 'Penambahan Poin' }}
+                                {{ $item['kategori_name'] ?? 'Penambahan Poin' }}
                             </p>
                             <p class="text-xs text-gray-500">
-                                {{ \Carbon\Carbon::parse($item['created_at'])->format('d M • H:i') }}
+                                {{ \Carbon\Carbon::parse($item['created_at'])->format('d M Y • H:i') }}
                             </p>
+                            @if(isset($item['added_by']))
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    oleh {{ $item['added_by'] }}
+                                </p>
+                            @endif
                         </div>
 
                         <p class="font-semibold text-green-600">
-                            +{{ $item['point_kategori']['point'] ?? 0 }}
+                            +{{ $item['point'] ?? 0 }}
                         </p>
                     </div>
                 @empty
