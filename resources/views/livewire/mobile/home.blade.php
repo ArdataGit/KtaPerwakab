@@ -152,8 +152,8 @@ mount(function () {
         ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
         ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
         ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI'],
-        ['icon' => 'donasi', 'label' => 'DONASI'],
-        ['icon' => 'poin', 'label' => 'POINT'],
+        ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
+        ['icon' => 'poin', 'label' => 'POINT', 'route' => route('mobile.poin.index')],
     ]" />
 
     {{-- BANNER --}}
