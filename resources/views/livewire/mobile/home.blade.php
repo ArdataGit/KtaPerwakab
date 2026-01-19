@@ -2,40 +2,46 @@
 
 use App\Services\AuthApiService;
 use App\Services\NewsArticleApiService;
-use function Livewire\Volt\state;
-use function Livewire\Volt\mount;
+use function Livewire\Volt\{state, mount};
 
 state([
-    'user' => session('user') ?? [],
-    'token' => session('token'),
-  'latestArticles' => [],
-    'search' => '',
+    'user'           => session('user') ?? [],
+    'token'          => session('token'),
+    'latestArticles' => [],
+    'search'         => '',
 ]);
 
 mount(function () {
+
     if (!$this->token) {
         return;
     }
 
+    /**
+     * 🔄 Fetch user terbaru
+     */
     $response = AuthApiService::me($this->token);
+
     if ($response->successful()) {
         $user = $response->json('data');
         session(['user' => $user]);
         $this->user = $user;
     }
 
-    // Fetch 3 artikel terbaru untuk beranda
+    /**
+     * 📰 Fetch artikel terbaru (maks 3)
+     */
     $articleResponse = NewsArticleApiService::list([
         'search' => $this->search ?: null,
     ]);
 
     if ($articleResponse->successful()) {
         $articles = $articleResponse->json('data.featured') ?? [];
-        // Ambil maksimal 3 artikel pertama
         $this->latestArticles = collect($articles)->take(3)->all();
     }
 });
 ?>
+
 
 @php
     use Carbon\Carbon;
@@ -176,7 +182,7 @@ mount(function () {
     <livewire:mobile.home.banner />
 
     {{-- ARTICLE --}}
-    <div class="px-6 mt-3 ">
+    <div class="px-4 mt-3 ">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Artikel Terbaru</h3>
 
         @forelse($latestArticles as $article)

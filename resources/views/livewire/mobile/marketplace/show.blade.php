@@ -70,9 +70,10 @@ mount(function ($id) {
                 <div class="p-4 space-y-3">
 
                     {{-- TITLE --}}
-                    <p class="text-base font-semibold text-gray-800 leading-snug">
+                    <p class="text-base font-semibold text-gray-800 mb-0 leading-snug">
                         {{ $product['product_name'] }}
                     </p>
+                  	<small class="text-gray-700">{{ $product['category'] }}</small>
 
                     {{-- PRICE --}}
                     <p class="text-green-600 font-bold text-lg">

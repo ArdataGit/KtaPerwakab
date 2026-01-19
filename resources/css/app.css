@@ -7,7 +7,6 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
     --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif,
@@ -31,13 +30,6 @@
     --color-accent-foreground: var(--color-white);
 }
 
-@layer theme {
-    .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
-    }
-}
 
 @layer base {
     *,
@@ -105,8 +97,8 @@ html, body {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden !important;
+    color-scheme: light;
 }
-
 .dropdown-enter {
     animation: dropdown-fade 0.18s ease-out forwards;
 }
@@ -245,3 +237,49 @@ html, body {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+/* 🔒 FORCE LIGHT MODE - TAILWIND v4 + WEBVIEW */
+:root {
+    color-scheme: light !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: light !important;
+    }
+
+    html, body {
+        background-color: #e5e7eb !important;
+        color: #000 !important;
+    }
+
+    /* FLUX UI FIX */
+    [data-theme],
+    [data-mode],
+    .dark {
+        background-color: inherit !important;
+        color: inherit !important;
+    }
+}
+/* Pastikan viewport menghormati safe area */
+html {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* Konten utama tidak nembus status & nav bar */
+body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Untuk elemen fixed / fullscreen */
+.padding-top-adjust{
+	padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.capacitor * {
+	padding-top: 12rem;
+    padding-bottom: 2rem;
+}

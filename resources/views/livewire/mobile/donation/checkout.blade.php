@@ -18,7 +18,6 @@ state([
 mount(function ($id) {
 
     $res = DonationApiService::detail($id);
-
     if (!$res->successful()) {
         abort(404);
     }

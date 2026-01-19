@@ -76,7 +76,7 @@ updated([
 ?>
 <x-layouts.mobile title="Berita">
     {{-- HEADER --}}
-    <div class="w-full bg-green-600 px-4 py-4 flex items-center space-x-3 rounded-b-2xl">
+    <div class="w-full bg-green-600 py-4 px-4 flex items-center space-x-3 rounded-b-2xl">
         <button onclick="window.history.back()">
             <img src="/images/assets/icon/back.svg" class="w-5 h-5">
         </button>

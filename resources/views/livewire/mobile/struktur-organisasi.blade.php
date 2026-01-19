@@ -105,7 +105,7 @@ mount(function () {
                     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                         <iframe 
                             src="/pdf-proxy?url={{ urlencode($fileUrl) }}" 
-                            class="w-full h-[500px] border-0">
+                            class="w-full border-0" style="min-height:30rem;">
                         </iframe>
                     </div>
 

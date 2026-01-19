@@ -16,12 +16,19 @@ state([
     'paymentMethods' => [],
     'showForm' => false,
     'donationHistories' => [],
+  
+  
+    'userId' => null,
 ]);
 $formatAmount = function ($value) {
     return number_format((int) $value, 0, ',', '.');
 };
 mount(function ($id) {
     // DETAIL CAMPAIGN
+    // ambil user dari session
+    $user = session('user');
+    $this->userId = $user['id'] ?? null;
+  
     $campaignRes = DonationCampaignApiService::detail($id);
     if ($campaignRes->successful()) {
         $this->campaign = $campaignRes->json('data');
@@ -57,6 +64,7 @@ $submit = function () {
   ]);
     $response = DonationApiService::donate([
         'campaign_id' => $this->campaign['id'],
+    	'user_id' => $this->userId,
         'amount' => $this->amount,
         'payment_method' => $this->payment_method,
         'donor_name' => $this->donor_name,
@@ -69,11 +77,6 @@ $submit = function () {
             ['id' => $donationId]
         );
     }
-  dd([
-    'status' => $response->status(),
-    'body' => $response->body(),
-    'json' => $response->json(),
-]);
 };
 ?>
 <x-layouts.mobile title="Donasi">
