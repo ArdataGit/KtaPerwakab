@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Services;
-
 use Illuminate\Support\Facades\Http;
-
 class NewsArticleApiService
 {
     protected static function client()
@@ -12,20 +9,16 @@ class NewsArticleApiService
             ->acceptJson()
             ->timeout(10);
     }
-
     /**
      * LIST ARTIKEL
      */
-    public static function list($category = null)
+    public static function list(array $params = [])
     {
         return self::client()->get(
             config('services.kta_api.base_url') . '/news',
-            array_filter([
-                'category' => $category,
-            ])
+            array_filter($params)
         );
     }
-
     /**
      * DETAIL ARTIKEL
      */
@@ -36,3 +29,4 @@ class NewsArticleApiService
         );
     }
 }
+?>

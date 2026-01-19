@@ -1,12 +1,14 @@
 <?php
 
 use App\Services\AuthApiService;
-use function Livewire\Volt\state;
-use function Livewire\Volt\mount;
+use App\Services\NewsArticleApiService;
+use function Livewire\Volt\{state, mount};
 
 state([
-    'user' => session('user') ?? [],
-    'token' => session('token'),
+    'user'           => session('user') ?? [],
+    'token'          => session('token'),
+    'latestArticles' => [],
+    'search'         => '',
 ]);
 
 mount(function () {
@@ -15,16 +17,31 @@ mount(function () {
         return;
     }
 
+    /**
+     * 🔄 Fetch user terbaru
+     */
     $response = AuthApiService::me($this->token);
 
     if ($response->successful()) {
         $user = $response->json('data');
-
         session(['user' => $user]);
         $this->user = $user;
     }
+
+    /**
+     * 📰 Fetch artikel terbaru (maks 3)
+     */
+    $articleResponse = NewsArticleApiService::list([
+        'search' => $this->search ?: null,
+    ]);
+
+    if ($articleResponse->successful()) {
+        $articles = $articleResponse->json('data.featured') ?? [];
+        $this->latestArticles = collect($articles)->take(3)->all();
+    }
 });
 ?>
+
 
 @php
     use Carbon\Carbon;
@@ -128,6 +145,11 @@ mount(function () {
                         Iuran Sekarang
                     @endif
                 </a>
+              
+                <a href="/iuran/saya"
+                   class="block w-full border border-green-600 text-green-700 py-3 rounded-xl font-semibold mb-4">
+                    Lihat Riwayat Iuran
+                </a>
 
                 {{-- CLOSE BUTTON (HANYA JIKA BOLEH) --}}
                 @if($closablePopup)
@@ -139,7 +161,7 @@ mount(function () {
             </div>
         </div>
     @endif
-
+<div class="pb-20">
     {{-- HERO --}}
     <x-mobile.home.hero :name="$user['name'] ?? 'Pengguna'" :photo="$user['profile_photo'] ?? null"
         :fullname="$user['name'] ?? 'Pengguna'" :city="$user['city'] ?? 'Kota Anda'" :role="$user['role'] ?? 'User'" />
@@ -148,20 +170,35 @@ mount(function () {
     <x-mobile.home.menu :items="[
         ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')],
         ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
-        ['icon' => 'karya', 'label' => 'KARYA & BISNIS', 'route' => route('mobile.karya.index')],
+        ['icon' => 'karya', 'label' => 'KARYA ', 'route' => route('mobile.karya.index')],
         ['icon' => 'martketplace', 'label' => 'MARKETPLACE', 'route' => route('mobile.marketplace.index')],
-        ['icon' => 'info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
-        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI'],
+        ['icon' => 'Info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
+        ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
         ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
-        ['icon' => 'poin', 'label' => 'POINT', 'route' => route('mobile.poin.index')],
+        ['icon' => 'karya', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
     ]" />
 
     {{-- BANNER --}}
-    <x-mobile.home.banner />
+    <livewire:mobile.home.banner />
 
     {{-- ARTICLE --}}
-    <x-mobile.home.article-card image="/images/assets/default-article.png"
-        title="Ingin Berorganisasi? Ini Cara Berorganisasi" link="#" />
+    <div class="px-4 mt-3 ">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Artikel Terbaru</h3>
 
+        @forelse($latestArticles as $article)
+            <x-mobile.home.article-card
+                :image="$article['cover_image'] ?? '/images/assets/default-article.png'"
+                :title="$article['title'] ?? 'Judul artikel belum tersedia'"
+                :link="route('mobile.article.detail', $article['id'])"
+            />
+        @empty
+            <div class="px-6 mt-10 pb-20">
+                <div class="bg-white rounded-xl shadow overflow-hidden p-8 text-center">
+                    <p class="text-gray-500">Belum ada artikel terbaru.</p>
+                </div>
+            </div>
+        @endforelse
+    </div>
+</div>
     <x-mobile.navbar active="home" />
 </x-layouts.mobile>

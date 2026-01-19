@@ -11,6 +11,8 @@ state([
 mount(function ($id) {
     $response = MarketplaceApiService::productDetail($id);
 
+    
+
     if ($response->successful()) {
         $this->product = $response->json('data');
     } else {
@@ -68,9 +70,10 @@ mount(function ($id) {
                 <div class="p-4 space-y-3">
 
                     {{-- TITLE --}}
-                    <p class="text-base font-semibold text-gray-800 leading-snug">
+                    <p class="text-base font-semibold text-gray-800 mb-0 leading-snug">
                         {{ $product['product_name'] }}
                     </p>
+                  	<small class="text-gray-700">{{ $product['category'] }}</small>
 
                     {{-- PRICE --}}
                     <p class="text-green-600 font-bold text-lg">
@@ -86,7 +89,7 @@ mount(function ($id) {
 
                     {{-- UMKM --}}
                     <p class="text-xs text-gray-500">
-                        Oleh <strong>{{ data_get($product, 'umkm.umkm_name', '-') }}</strong>
+                        Oleh <strong>{{ data_get($product, 'umkm.user.name', '-') }}</strong>
                     </p>
 
                     <hr>

@@ -59,7 +59,7 @@ state([
                 </a>
 
                 {{-- Riwayat Donasi --}}
-                <a href="#" class="flex items-center justify-between px-4 py-4">
+                <a href="/my-donation" class="flex items-center justify-between px-4 py-4">
                     <div class="flex items-center space-x-3">
                         <img src="/images/assets/icon/riwayat-donasi.svg" class="w-5 h-5">
                         <span class="text-sm font-medium">Riwayat Donasi</span>
@@ -80,7 +80,7 @@ state([
 
                 {{-- Tukar Poin (ANGGOTA ONLY) --}}
                 @if($role === 'anggota')
-                    <a href="#" class="flex items-center justify-between px-4 py-4">
+                    <a href="/poin-saya" class="flex items-center justify-between px-4 py-4">
                         <div class="flex items-center space-x-3">
                             <img src="/images/assets/icon/point.svg" class="w-5 h-5">
                             <span class="text-sm font-medium">Tukar Poin</span>
@@ -89,15 +89,17 @@ state([
                     </a>
                 @endif
 
+                @if($role === 'anggota')
                 {{-- Produk Saya --}}
-                <a href="#" class="flex items-center justify-between px-4 py-4">
+                <a href="{{ route('mobile.my-products.index') }}" class="flex items-center justify-between px-4 py-4">
                     <div class="flex items-center space-x-3">
                         <img src="/images/assets/icon/produk.svg" class="w-5 h-5">
                         <span class="text-sm font-medium">Produk Saya</span>
                     </div>
                     <img src="/images/assets/icon/chevron-right.svg" class="w-4 h-4">
                 </a>
-
+                @endif
+              
                 {{-- LOGOUT --}}
                 <button type="button" @click="showLogoutModal = true"
                     class="w-full flex items-center justify-between px-4 py-4 text-left">
@@ -117,7 +119,7 @@ state([
             <div @click.away="showLogoutModal = false" class="bg-white rounded-2xl w-full max-w-sm p-5 text-center">
 
                 <div class="mx-auto mb-3 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                    <img src="/images/assets/icon/info.svg" class="w-5 h-5">
+                    <img src="/images/assets/icon/Info.svg" class="w-5 h-5">
                 </div>
 
                 <p class="text-sm text-gray-700 mb-1 font-semibold">

@@ -9,6 +9,38 @@ use App\Services\AuthApiService;
 |--------------------------------------------------------------------------
 */
 Volt::route('/', 'mobile.splash')->name('mobile.splash');
+// routes/web.php
+Route::get('/pdf-proxy', function () {
+    $url = request('url');
+
+    abort_unless(filter_var($url, FILTER_VALIDATE_URL), 404);
+
+    return response()->stream(function () use ($url) {
+        echo file_get_contents($url);
+    }, 200, [
+        'Content-Type' => 'application/pdf',
+        'X-Frame-Options' => 'SAMEORIGIN',
+    ]);
+});
+
+// routes/web.php
+Route::get('/iframe-proxy', function () {
+    $url = request('url');
+
+    abort_unless(
+        $url && filter_var($url, FILTER_VALIDATE_URL),
+        404
+    );
+
+    return response()->stream(function () use ($url) {
+        echo file_get_contents($url);
+    }, 200, [
+        'Content-Type' => 'text/html',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'Content-Security-Policy' => "frame-ancestors 'self'",
+    ]);
+})->name('iframe.proxy');
+
 Route::middleware('mobile.guest')->group(function () {
 
     Volt::route('/onboarding', 'mobile.onboarding')->name('mobile.onboarding');
@@ -16,6 +48,8 @@ Route::middleware('mobile.guest')->group(function () {
     Volt::route('/auth', 'mobile.auth.landing')->name('auth.landing');
     Volt::route('/login', 'mobile.login')->name('mobile.login');
     Volt::route('/register', 'mobile.register')->name('mobile.register');
+    Volt::route('/forgot-password', 'mobile.forgot-password')->name('mobile.forgot-password');
+    Volt::route('/reset-password', 'mobile.reset-password')->name('mobile.reset-password');
 
 });
 
@@ -32,6 +66,11 @@ Route::middleware('mobile.auth')->group(function () {
     // KTA
     Volt::route('/kta', 'mobile.kta')->name('mobile.kta');
 
+    // MY PRODUCTS
+    Volt::route('/my-product', 'mobile.my-products.index')->name('mobile.my-products.index');
+    Volt::route('/my-product/create', 'mobile.my-products.create')->name('mobile.my-products.create');
+    Volt::route('/my-product/{id}/edit', 'mobile.my-products.edit')->name('mobile.my-products.edit');
+
     // IURAN
     Volt::route('/iuran', 'mobile.iuran')->name('mobile.iuran');
     Volt::route('/iuran/metode', 'mobile.iuran-metode')->name('mobile.iuran.metode');
@@ -42,6 +81,9 @@ Route::middleware('mobile.auth')->group(function () {
     // PROFILE
     Volt::route('/profile', 'mobile.profile')->name('mobile.profile');
     Volt::route('/profile/edit', 'mobile.profile-edit')->name('mobile.profile.edit');
+
+    // STRUKTUR ORGANISASI
+    Volt::route('/struktur-organisasi', 'mobile.struktur-organisasi')->name('mobile.struktur-organisasi');
 
     // ARTICLE
     Volt::route('/articles', 'mobile.article')->name('mobile.articles');
@@ -62,9 +104,20 @@ Route::middleware('mobile.auth')->group(function () {
     Volt::route('/karya', 'mobile.karya.index')
         ->name('mobile.karya.index');
 
-    // Marketplace Detail Produk
+    // karya Detail Produk
     Volt::route('/karya/{id}', 'mobile.karya.show')
         ->name('mobile.karya.show');
+  
+  
+      // Explore Bisnis (List)
+    Volt::route('/explore-bisnis', 'mobile.bisnis.explore')
+        ->name('mobile.bisnis.explore');
+
+    // Detail Bisnis (by SLUG)
+    Volt::route('/bisnis/{slug}', 'mobile.bisnis.show')
+        ->name('mobile.bisnis.show');
+  
+  
     // Info Duka
     Volt::route('/info-duka', 'mobile.info-duka.index')
         ->name('mobile.info-duka.index');
@@ -87,10 +140,16 @@ Route::middleware('mobile.auth')->group(function () {
         ->name('mobile.donation.index');
     Volt::route('/donation-campaign/{id}', 'mobile.donation.detail')
         ->name('mobile.donation.detail');
+    Volt::route('/donation-campaign/{id}/histories', 'mobile.donation.histories')
+        ->name('mobile.donation.histories');
     Volt::route(
         '/donation-campaign/{id}/checkout',
         'mobile.donation.checkout'
     )->name('mobile.donation.checkout');
+    Volt::route('/my-donation', 'mobile.donation.my')
+        ->name('mobile.donation.my');
+  
+  	Volt::route('/banner/{id}', 'mobile.banner.show')->name('mobile.banner.show');
 
     Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
 

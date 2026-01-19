@@ -1,8 +1,7 @@
 <?php
 
 use App\Services\DonationCampaignApiService;
-use function Livewire\Volt\state;
-use function Livewire\Volt\mount;
+use function Livewire\Volt\{state, mount, updated};
 
 state([
     'campaigns' => [],
@@ -10,12 +9,32 @@ state([
 ]);
 
 mount(function () {
-    $response = DonationCampaignApiService::list();
+    $response = DonationCampaignApiService::list([
+        'search' => $this->keyword ?: null,
+    ]);
+
     if ($response->successful()) {
         $this->campaigns = $response->json('data.campaigns') ?? [];
+    } else {
+        $this->campaigns = [];
     }
 });
+
+updated([
+    'keyword' => function () {
+        $response = DonationCampaignApiService::list([
+            'search' => $this->keyword ?: null,
+        ]);
+
+        if ($response->successful()) {
+            $this->campaigns = $response->json('data.campaigns') ?? [];
+        } else {
+            $this->campaigns = [];
+        }
+    },
+]);
 ?>
+
 
 <x-layouts.mobile title="Donasi">
 
@@ -32,17 +51,19 @@ mount(function () {
         {{-- SEARCH --}}
         <div class="flex items-center space-x-2">
             <div class="flex-1 relative">
-                <input type="text" placeholder="Cari" wire:model.debounce.500ms="keyword" class="w-full pl-10 pr-4 py-2 rounded-full border text-sm
-                           focus:outline-none focus:ring focus:ring-green-200">
+                <input
+    type="text"
+    placeholder="Cari"
+    wire:model.live="keyword"
+    class="w-full pl-10 pr-4 py-2 rounded-full border text-sm
+           focus:outline-none focus:ring focus:ring-green-200"
+/>
 
                 <span class="absolute left-3 top-1/2 -translate-y-1/2">
                     <img src="/images/assets/icon/search.svg" class="w-4 h-4 opacity-60">
                 </span>
             </div>
 
-            <button class="w-10 h-10 rounded-full border flex items-center justify-center">
-                <img src="/images/assets/icon/filter.svg" class="w-4 h-4">
-            </button>
         </div>
 
         {{-- CAMPAIGN LIST --}}

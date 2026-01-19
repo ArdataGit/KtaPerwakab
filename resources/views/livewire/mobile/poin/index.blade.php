@@ -1,5 +1,6 @@
 <?php
 use App\Services\PoinApiService;
+use App\Services\AuthApiService;
 use function Livewire\Volt\{state, mount};
 
 state([
@@ -9,36 +10,70 @@ state([
     'historyTambah' => [],
     'historyTukar' => [],
 ]);
+
 $load = function () {
 
-    $this->user = session('user');
+    $token = session('token');
 
-    if (!$this->user || !isset($this->user['id'])) {
+    if (!$token) {
+        redirect()->route('mobile.login');
         return;
     }
 
-    $userId = $this->user['id'];
+    /**
+     * 🔄 AMBIL USER TERBARU (SUMBER UTAMA)
+     */
+    $userResponse = AuthApiService::me($token);
 
+    if (!$userResponse->successful()) {
+        session()->forget(['user', 'token']);
+        redirect()->route('mobile.login');
+        return;
+    }
+
+    $user = $userResponse->json('data');
+
+    session(['user' => $user]);
+
+    $this->user  = $user;
+    $this->saldo = (int) ($user['point'] ?? 0);
+
+    $userId = $user['id'];
+
+    /**
+     * 📥 RIWAYAT PENAMBAHAN POIN
+     */
     $resTambah = PoinApiService::historyPenambahan($userId, [
         'per_page' => 20,
     ]);
 
+    // Response langsung berupa array
+        $data = $resTambah->json();
+        
+        if (is_array($data)) {
+            $this->historyTambah = $data;
+            
+            // Ambil saldo dari user session atau item pertama jika ada
+            if (!empty($data) && isset($data[0]['user_saldo'])) {
+                $this->saldo = (int) $data[0]['user_saldo'];
+            } else {
+                // Fallback ke session user jika ada
+                $this->saldo = (int) ($this->user['saldo_point'] ?? 0);
+            }
+        }
+
+    /**
+     * 📤 RIWAYAT PENUKARAN POIN
+     */
     $resTukar = PoinApiService::historyPenukaran($userId, [
         'per_page' => 20,
     ]);
 
-    if ($resTambah->successful()) {
-        // ✅ LIST RIWAYAT (INI YANG BENAR)
-        $this->historyTambah = $resTambah->json('data.data') ?? [];
-
-        // ✅ SALDO
-        $this->saldo = (int) ($resTambah->json('user.saldo_point') ?? 0);
-    }
-
-    if ($resTukar->successful()) {
-        $this->historyTukar = $resTukar->json('data.data') ?? [];
-    }
+    $this->historyTukar = $resTukar->successful()
+        ? $resTukar->json('data.data') ?? []
+        : [];
 };
+
 
 
 
@@ -105,17 +140,23 @@ mount(fn() => $this->load());
             @if ($tab === 'tambah')
                 @forelse ($historyTambah as $item)
                     <div class="flex justify-between items-start text-sm">
-                        <div>
+                        <div class="flex-1">
                             <p class="font-semibold text-gray-800">
-                                {{ $item['point_kategori']['name'] ?? 'Penambahan Poin' }}
+                                {{ $item['kategori_name'] ?? 'Penambahan Poin' }}
                             </p>
                             <p class="text-xs text-gray-500">
-                                {{ \Carbon\Carbon::parse($item['created_at'])->format('d M • H:i') }}
+                                {{ \Carbon\Carbon::parse($item['created_at'])->format('d M Y • H:i') }}
                             </p>
+                          
+                            @if(isset($item['added_by']))
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    oleh {{ $item['added_by'] }}
+                                </p>
+                            @endif
                         </div>
 
                         <p class="font-semibold text-green-600">
-                            +{{ $item['point_kategori']['point'] ?? 0 }}
+                            +{{ $item['point'] ?? 0 }}
                         </p>
                     </div>
                 @empty

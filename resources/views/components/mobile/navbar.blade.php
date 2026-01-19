@@ -20,10 +20,10 @@
         </a>
 
         {{-- MENU / FITUR --}}
-        <a href="#" class="flex flex-col items-center 
+        <a href="/poin-saya" class="flex flex-col items-center 
             {{ $active === 'menu' ? 'text-green-600' : 'text-gray-500' }}">
-            <img src="/images/assets/icon/squares.svg" class="w-5 h-5 mb-1">
-            <span class="text-[10px]">Menu</span>
+            <img src="/images/assets/icon/point.svg" class="w-5 h-5 mb-1">
+            <span class="text-[10px]">Point</span>
         </a>
 
         {{-- PROFILE --}}

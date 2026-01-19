@@ -24,7 +24,7 @@
         </div>
 
         {{-- BUTTON AREA selalu di bawah --}}
-        <div class="relative z-10 w-full px-12 mt-86 pb-10 space-y-3">
+        <div class="relative z-10 w-full px-12 pb-10 space-y-3" style="margin-top:13rem;">
 
             <x-mobile.button wire:navigate href="/login">
                 Login

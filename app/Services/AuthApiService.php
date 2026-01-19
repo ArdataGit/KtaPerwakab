@@ -30,4 +30,39 @@ class AuthApiService
         return Http::withToken($token)
             ->post(env('API_BASE_URL') . '/logout');
     }
+
+    public static function forgotPassword(string $email)
+    {
+        return Http::withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->timeout(30)
+            ->post(env('API_BASE_URL') . '/forgot-password', [
+                'email' => $email
+            ]);
+    }
+
+    public static function validateResetToken(string $token)
+    {
+        return Http::withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->timeout(10)
+            ->post(env('API_BASE_URL') . '/validate-reset-token', [
+                'token' => $token
+            ]);
+    }
+
+    public static function resetPassword(string $token, string $password, string $passwordConfirmation)
+    {
+        return Http::withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->timeout(30)
+            ->post(env('API_BASE_URL') . '/reset-password', [
+                'token' => $token,
+                'password' => $password,
+                'password_confirmation' => $passwordConfirmation
+            ]);
+    }
 }

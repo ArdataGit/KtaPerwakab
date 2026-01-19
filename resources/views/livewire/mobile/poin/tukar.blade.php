@@ -1,25 +1,40 @@
 <?php
 
 use App\Services\PoinApiService;
+use App\Services\AuthApiService;
 use function Livewire\Volt\{state, mount};
 
 state([
-    'user' => null,
+    'user'  => null,
+    'token' => null,
     'saldo' => 0,
     'items' => [],
 ]);
 
 $load = function () {
 
-    $this->user = session('user');
-
-    if (!$this->user) {
+    $this->token = session('token');
+    if (!$this->token) {
         return;
     }
 
-    // saldo bisa dari session atau API lain
-    $this->saldo = $this->user['point'] ?? 0;
+    /**
+     * 🔄 FETCH USER TERBARU DARI API
+     */
+    $userResponse = AuthApiService::me($this->token);
 
+    if ($userResponse->successful()) {
+        $user = $userResponse->json('data');
+        session(['user' => $user]);
+        $this->user = $user;
+        $this->saldo = $user['point'] ?? 0;
+    } else {
+        return;
+    }
+
+    /**
+     * 📦 FETCH PRODUK POIN
+     */
     $res = PoinApiService::list([
         'per_page' => 20,
     ]);
@@ -29,8 +44,9 @@ $load = function () {
         : [];
 };
 
-mount(fn() => $this->load());
+mount(fn () => $this->load());
 ?>
+
 
 <x-layouts.mobile title="Tukar Poin">
 
