@@ -163,19 +163,42 @@ mount(fn() => $this->load());
             {{-- RIWAYAT PENUKARAN --}}
             @if ($tab === 'tukar')
                 @forelse ($historyTukar as $item)
-                    <div class="flex justify-between items-start text-sm">
-                        <div>
+                    <div class="flex justify-between items-start text-sm bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="flex-1 pr-3">
                             <p class="font-semibold text-gray-800">
                                 {{ $item['keterangan'] ?? 'Penukaran Poin' }}
                             </p>
-                            <p class="text-xs text-gray-500">
-                                {{ \Carbon\Carbon::parse($item['tanggal'])->format('d M • H:i') }}
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ \Carbon\Carbon::parse($item['tanggal'])->format('d M Y • H:i') }}
                             </p>
                         </div>
 
-                        <p class="font-semibold text-red-600">
-                            {{ $item['point'] }}
-                        </p>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600 mb-1">
+                                {{ $item['point'] }}
+                            </p>
+                            
+                            @php
+                                $status = $item['status'] ?? 'pending';
+                                $statusClass = 'bg-gray-100 text-gray-600';
+                                $statusLabel = ucfirst($status);
+                                
+                                if($status === 'pending') {
+                                    $statusClass = 'bg-yellow-100 text-yellow-700';
+                                    $statusLabel = 'Menunggu';
+                                } elseif($status === 'approved' || $status === 'selesai' || $status === 'success') {
+                                    $statusClass = 'bg-green-100 text-green-700';
+                                    $statusLabel = 'Disetujui';
+                                } elseif($status === 'rejected' || $status === 'failed' || $status === 'batal') {
+                                    $statusClass = 'bg-red-100 text-red-700';
+                                    $statusLabel = 'Ditolak';
+                                }
+                            @endphp
+                            
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold {{ $statusClass }}">
+                                {{ $statusLabel }}
+                            </span>
+                        </div>
                     </div>
                 @empty
                     <p class="text-center text-sm text-gray-500 py-8">

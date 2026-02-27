@@ -58,6 +58,15 @@ state([
                     <img src="/images/assets/icon/chevron-right.svg" class="w-4 h-4">
                 </a>
 
+                {{-- Data Keluarga --}}
+                <a href="{{ route('mobile.family') }}" class="flex items-center justify-between px-4 py-4">
+                    <div class="flex items-center space-x-3">
+                        <img src="/images/assets/icon/user.svg" class="w-5 h-5">
+                        <span class="text-sm font-medium">Data Keluarga</span>
+                    </div>
+                    <img src="/images/assets/icon/chevron-right.svg" class="w-4 h-4">
+                </a>
+
                 {{-- Riwayat Donasi --}}
                 <a href="/my-donation" class="flex items-center justify-between px-4 py-4">
                     <div class="flex items-center space-x-3">

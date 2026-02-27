@@ -18,9 +18,9 @@ class PoinApiService
     {
         return Http::withToken(session('token'))
             ->get(
-                config('services.kta_api.base_url') . '/master-penukaran-poin',
-                $params
-            );
+            config('services.kta_api.base_url') . '/master-penukaran-poin',
+            $params
+        );
     }
 
     /**
@@ -30,8 +30,8 @@ class PoinApiService
     {
         return Http::withToken(session('token'))
             ->get(
-                config('services.kta_api.base_url') . '/master-penukaran-poin/' . $id
-            );
+            config('services.kta_api.base_url') . '/master-penukaran-poin/' . $id
+        );
     }
 
     /* =====================================================
@@ -46,10 +46,10 @@ class PoinApiService
     {
         return Http::withToken(session('token'))
             ->get(
-                config('services.kta_api.base_url')
-                . '/users/' . $userId . '/tukar-point',
-                $params
-            );
+            config('services.kta_api.base_url')
+            . '/users/' . $userId . '/tukar-point',
+            $params
+        );
     }
 
     /* =====================================================
@@ -64,9 +64,20 @@ class PoinApiService
     {
         return Http::withToken(session('token'))
             ->get(
-                config('services.kta_api.base_url')
-                . '/users/' . $userId . '/point-history',
-                $params
-            );
+            config('services.kta_api.base_url')
+            . '/users/' . $userId . '/point-history',
+            $params
+        );
+    }
+    /**
+     * Request Tukar Poin
+     */
+    public static function redeem(array $payload)
+    {
+        return Http::withToken(session('token'))
+            ->post(
+            config('services.kta_api.base_url') . '/point/redeem',
+            $payload
+        );
     }
 }

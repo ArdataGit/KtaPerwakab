@@ -80,7 +80,7 @@ updated([
                 </svg>
             </button>
             <p class="text-white font-semibold text-base">
-                Marketplace
+                UMKM
             </p>
         </div>
 

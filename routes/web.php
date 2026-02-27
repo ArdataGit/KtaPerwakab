@@ -5,11 +5,7 @@ use App\Services\AuthApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-/*
-|--------------------------------------------------------------------------
-| MOBILE PUBLIC ROUTES (TANPA LOGIN)
-|--------------------------------------------------------------------------
-*/
+/* |-------------------------------------------------------------------------- | MOBILE PUBLIC ROUTES (TANPA LOGIN) |-------------------------------------------------------------------------- */
 Volt::route('/', 'mobile.splash')->name('mobile.splash');
 // routes/web.php
 Route::get('/pdf-proxy', function () {
@@ -18,12 +14,13 @@ Route::get('/pdf-proxy', function () {
     abort_unless(filter_var($url, FILTER_VALIDATE_URL), 404);
 
     return response()->stream(function () use ($url) {
-        echo file_get_contents($url);
-    }, 200, [
+            echo file_get_contents($url);
+        }
+        , 200, [
         'Content-Type' => 'application/pdf',
         'X-Frame-Options' => 'SAMEORIGIN',
-    ]);
-});
+        ]);
+    });
 
 
 Route::get('/proxy-pdf', function (Request $request) {
@@ -41,8 +38,8 @@ Route::get('/proxy-pdf', function (Request $request) {
     }
 
     return response($response->body(), 200)
-        ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'inline; filename="file.pdf"');
+    ->header('Content-Type', 'application/pdf')
+    ->header('Content-Disposition', 'inline; filename="file.pdf"');
 });
 
 // routes/web.php
@@ -55,13 +52,14 @@ Route::get('/iframe-proxy', function () {
     );
 
     return response()->stream(function () use ($url) {
-        echo file_get_contents($url);
-    }, 200, [
+            echo file_get_contents($url);
+        }
+        , 200, [
         'Content-Type' => 'text/html',
         'X-Frame-Options' => 'SAMEORIGIN',
         'Content-Security-Policy' => "frame-ancestors 'self'",
-    ]);
-})->name('iframe.proxy');
+        ]);
+    })->name('iframe.proxy');
 
 Route::middleware('mobile.guest')->group(function () {
 
@@ -75,11 +73,7 @@ Route::middleware('mobile.guest')->group(function () {
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| MOBILE PROTECTED ROUTES (WAJIB LOGIN)
-|--------------------------------------------------------------------------
-*/
+/* |-------------------------------------------------------------------------- | MOBILE PROTECTED ROUTES (WAJIB LOGIN) |-------------------------------------------------------------------------- */
 Route::middleware('mobile.auth')->group(function () {
 
     // Home
@@ -103,9 +97,13 @@ Route::middleware('mobile.auth')->group(function () {
     // PROFILE
     Volt::route('/profile', 'mobile.profile')->name('mobile.profile');
     Volt::route('/profile/edit', 'mobile.profile-edit')->name('mobile.profile.edit');
+    Volt::route('/profile/family', 'mobile.family')->name('mobile.family');
 
     // STRUKTUR ORGANISASI
     Volt::route('/struktur-organisasi', 'mobile.struktur-organisasi')->name('mobile.struktur-organisasi');
+
+    // SEJARAH ORGANISASI
+    Volt::route('/sejarah-organisasi', 'mobile.history')->name('mobile.history');
 
     // ARTICLE
     Volt::route('/articles', 'mobile.article')->name('mobile.articles');
@@ -129,17 +127,17 @@ Route::middleware('mobile.auth')->group(function () {
     // karya Detail Produk
     Volt::route('/karya/{id}', 'mobile.karya.show')
         ->name('mobile.karya.show');
-  
-  
-      // Explore Bisnis (List)
+
+
+    // Explore Bisnis (List)
     Volt::route('/explore-bisnis', 'mobile.bisnis.explore')
         ->name('mobile.bisnis.explore');
 
     // Detail Bisnis (by SLUG)
     Volt::route('/bisnis/{slug}', 'mobile.bisnis.show')
         ->name('mobile.bisnis.show');
-  
-  
+
+
     // Info Duka
     Volt::route('/info-duka', 'mobile.info-duka.index')
         ->name('mobile.info-duka.index');
@@ -170,49 +168,52 @@ Route::middleware('mobile.auth')->group(function () {
     )->name('mobile.donation.checkout');
     Volt::route('/my-donation', 'mobile.donation.my')
         ->name('mobile.donation.my');
-  
-  	Volt::route('/banner/{id}', 'mobile.banner.show')->name('mobile.banner.show');
+
+    Volt::route('/banner/{id}', 'mobile.banner.show')->name('mobile.banner.show');
 
     Route::post('/profile/photo', function (\Illuminate\Http\Request $request) {
 
-        $token = session('token');
+            $token = session('token');
 
-        $response = \App\Services\UserApiService::updatePhoto(
-            $token,
-            $request->file('photo')
-        );
+            $response = \App\Services\UserApiService::updatePhoto(
+                $token,
+                $request->file('photo')
+            );
 
-        if ($response->successful()) {
-            session(['user' => $response->json('data')]);
-        }
-
-        return back();
-
-    })->name('mobile.profile.photo');
-    // LOGOUT
-    Route::post('/logout', function () {
-
-        $token = session('token');
-
-        if ($token) {
-            try {
-                AuthApiService::logout($token);
-            } catch (\Throwable $e) {
-                // aman diabaikan
+            if ($response->successful()) {
+                session(['user' => $response->json('data')]);
             }
+
+            return back();
+
         }
+        )->name('mobile.profile.photo');
+        // LOGOUT
+        Route::post('/logout', function () {
 
-        session()->forget([
-            'user',
-            'token',
-            'membership_fee_id',
-            'membership_fee_amount',
-        ]);
+            $token = session('token');
 
-        session()->invalidate();
-        session()->regenerateToken();
+            if ($token) {
+                try {
+                    AuthApiService::logout($token);
+                }
+                catch (\Throwable $e) {
+                // aman diabaikan
+                }
+            }
 
-        return redirect()->route('mobile.login');
+            session()->forget([
+                'user',
+                'token',
+                'membership_fee_id',
+                'membership_fee_amount',
+            ]);
 
-    })->name('mobile.logout');
-});
+            session()->invalidate();
+            session()->regenerateToken();
+
+            return redirect()->route('mobile.login');
+
+        }
+        )->name('mobile.logout');
+    });

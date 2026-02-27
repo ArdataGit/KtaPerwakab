@@ -20,91 +20,12 @@ state([
     'photo' => null,
     'photo_preview' => null,
 
-    // FAMILY MEMBERS
-    'family_members' => session('user.family_members') ?? [
-        [
-            'relationship' => '',
-            'age' => '',
-            'name_ktp' => '',
-            'nickname' => '',
-            'address' => '',
-        ]
-    ],
+
 
     'snackbar' => ['type' => '', 'message' => ''],
 ]);
 
-$addFamilyMember = function () {
-    $this->family_members[] = [
-        'relationship' => '',
-        'age' => '',
-        'name_ktp' => '',
-        'nickname' => '',
-        'address' => '',
-    ];
-};
 
-$removeFamilyMember = function ($index) {
-
-    $member = $this->family_members[$index] ?? null;
-    if (!$member) return;
-
-    $token = session('token');
-    if (!$token) {
-        $this->snackbar = [
-            'type' => 'error',
-            'message' => 'Sesi login tidak valid'
-        ];
-        return;
-    }
-
-    // Kalau ada ID berarti memang dari database
-    if (!empty($member['id'])) {
-
-        $delete = UserApiService::deleteFamilyMember(
-            $token,
-            $member['id']
-        );
-
-        if ($delete->failed()) {
-            $this->snackbar = [
-                'type' => 'error',
-                'message' => $delete->json('message') ?? 'Gagal menghapus'
-            ];
-            return;
-        }
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | 🔥 REFRESH DATA USER DARI API
-    |--------------------------------------------------------------------------
-    */
-
-    $me = UserApiService::me($token);
-
-    if ($me->successful()) {
-
-        $freshUser = $me->json('data');
-
-        // 🔥 Update session
-        session(['user' => $freshUser]);
-
-        // 🔥 Update state Livewire
-        $this->user = $freshUser;
-        $this->family_members = $freshUser['family_members'] ?? [];
-
-    } else {
-
-        // fallback kalau API me gagal
-        $this->family_members = [];
-    }
-
-    $this->snackbar = [
-        'type' => 'success',
-        'message' => 'Anggota keluarga dihapus'
-    ];
-};
 
 $submit = function () {
 
@@ -127,7 +48,6 @@ $submit = function () {
         'occupation'=> $this->occupation,
         'gender'    => $this->gender ?: null,
         'birth_date'=> $this->birth_date ?: null,
-        'family_members' => $this->family_members,
     ];
 
     $response = UserApiService::updateProfileWithPhoto(
@@ -283,77 +203,7 @@ $submit = function () {
                 </div>
             </div>
           
-          <!-- ============================= -->
-          <!-- DATA KELUARGA -->
-          <!-- ============================= -->
-          <div>
-              <p class="text-base font-semibold text-gray-800 mb-4">
-                  Data Keluarga Pengikut / Tertanggung
-              </p>
 
-              <div class="space-y-6">
-
-                  @foreach($family_members as $index => $member)
-                      <div class="bg-white rounded-xl p-4 border border-gray-200 space-y-3">
-
-                          <div class="flex justify-between items-center">
-                              <span class="text-sm font-semibold text-gray-700">
-                                  Anggota #{{ $index + 1 }}
-                              </span>
-
-                              @if(count($family_members) > 1)
-                                  <button type="button"
-                                      wire:click="removeFamilyMember({{ $index }})"
-                                      class="text-red-500 text-xs">
-                                      Hapus
-                                  </button>
-                              @endif
-                          </div>
-
-                          <select wire:model.defer="family_members.{{ $index }}.relationship"
-                              class="w-full rounded-lg px-3 py-2 text-sm border border-gray-300">
-                              <option value="">Pilih Hubungan</option>
-                              <option value="Ayah">Ayah</option>
-                              <option value="Ibu">Ibu</option>
-                              <option value="Suami">Suami</option>
-                              <option value="Istri">Istri</option>
-                              <option value="Anak">Anak</option>
-                              <option value="Ayah Mertua">Ayah Mertua</option>
-                              <option value="Ibu Mertua">Ibu Mertua</option>
-                          </select>
-
-                          <input type="text"
-                              wire:model.defer="family_members.{{ $index }}.name_ktp"
-                              placeholder="Nama sesuai KTP"
-                              class="w-full rounded-lg px-3 py-2 text-sm border border-gray-300">
-
-                          <input type="text"
-                              wire:model.defer="family_members.{{ $index }}.nickname"
-                              placeholder="Nama Panggilan"
-                              class="w-full rounded-lg px-3 py-2 text-sm border border-gray-300">
-
-                          <input type="number"
-                              wire:model.defer="family_members.{{ $index }}.age"
-                              placeholder="Umur"
-                              class="w-full rounded-lg px-3 py-2 text-sm border border-gray-300">
-
-                          <textarea
-                              wire:model.defer="family_members.{{ $index }}.address"
-                              placeholder="Alamat"
-                              rows="2"
-                              class="w-full rounded-lg px-3 py-2 text-sm border border-gray-300 resize-none"></textarea>
-
-                      </div>
-                  @endforeach
-
-                  <button type="button"
-                      wire:click="addFamilyMember"
-                      class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl text-sm font-medium">
-                      + Tambah Anggota Keluarga
-                  </button>
-
-              </div>
-          </div>
 
             <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-base transition duration-200">
                 Simpan Perubahan

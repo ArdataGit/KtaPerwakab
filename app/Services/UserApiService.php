@@ -24,10 +24,22 @@ class UserApiService
             ->post(env('API_BASE_URL') . '/user/profile', $payload);
     }
 
-  	public static function deleteFamilyMember($token, $id)
+    public static function storeFamilyMember(string $token, array $payload)
     {
         return \Http::withToken($token)
-            ->delete(env('API_BASE_URL') . "/user/family/{$id}");
+            ->post(env('API_BASE_URL') . '/family-members', $payload);
+    }
+
+    public static function updateFamilyMember(string $token, $id, array $payload)
+    {
+        return \Http::withToken($token)
+            ->put(env('API_BASE_URL') . "/family-members/{$id}", $payload);
+    }
+
+    public static function deleteFamilyMember(string $token, $id)
+    {
+        return \Http::withToken($token)
+            ->delete(env('API_BASE_URL') . "/family-members/{$id}");
     }
 
     /**
@@ -59,10 +71,10 @@ class UserApiService
     {
         return Http::withToken($token)
             ->attach(
-                'profile_photo',
-                file_get_contents($photo->getRealPath()),
-                $photo->getClientOriginalName()
-            )
+            'profile_photo',
+            file_get_contents($photo->getRealPath()),
+            $photo->getClientOriginalName()
+        )
             ->post(env('API_BASE_URL') . '/user/profile/photo');
     }
 
