@@ -1,11 +1,21 @@
 <x-layouts.mobile title="Kartu Tanda Anggota">
     @php
+        use App\Services\AuthApiService;
+
+        $token = session('token');
+        if ($token) {
+            $response = AuthApiService::me($token);
+            if ($response->successful()) {
+                $user = $response->json('data');
+                session(['user' => $user]);
+            }
+        }
         $user = session('user') ?? [];
         $name = $user['name'] ?? '-';
         $email = $user['email'] ?? '-';
         $phone = $user['phone'] ?? '-';
         $id = str_pad($user['id'] ?? 0, 6, '0', STR_PAD_LEFT);
-        $expired = $user['expired_at']
+        $expired = !empty($user['expired_at'])
             ? date('d M Y', strtotime($user['expired_at']))
             : '-';
     @endphp

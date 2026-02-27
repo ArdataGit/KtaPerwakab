@@ -106,7 +106,12 @@ mount(function () {
     @if($showFamilyPopup)
         <div x-data="{ open: true }" x-show="open" x-transition
              class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4" style="isolation:isolate;">
-            <div class="bg-white rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl">
+            <div class="relative bg-white rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl">
+                <button @click="open = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 <div class="mb-5">
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-3">
@@ -170,15 +175,15 @@ mount(function () {
     </div>
 
     <!-- FLOATING WHATSAPP BUTTON -->
-    <a href="https://wa.me/628567895905" target="_blank"
-       class="fixed bottom-24 right-4 z-[9999] bg-white text-[#25D366] p-3 rounded-full shadow-lg hover:bg-gray-100 transition-transform hover:scale-105 flex items-center justify-center border border-gray-100">
-        <svg xmlns="http://www.w3.org/2000/svg"
-            class="w-8 h-8"
-            fill="currentColor"
-            viewBox="0 0 24 24">
-            <path d="M12.031 0C5.383 0 0 5.385 0 12.035c0 2.128.553 4.2 1.606 6.02L.03 24l6.105-1.597A11.968 11.968 0 0 0 12.031 24c6.646 0 12.033-5.385 12.033-12.035C24.064 5.385 18.677 0 12.031 0zm7.13 17.293c-.301.85-1.493 1.554-2.316 1.71-.62.115-1.427.185-2.589-.253-.518-.196-1.126-.454-1.849-.806-3.882-1.89-6.38-5.836-6.572-6.096-.192-.26-1.57-2.094-1.57-3.996 0-1.902.99-2.835 1.34-3.23.35-.395.76-.494 1.012-.494.25 0 .502.002.723.013.232.01.543-.09.827.597.291.704.992 2.43 1.079 2.607.087.177.146.383.029.615-.117.23-.176.38-.352.58-.175.2-.363.428-.521.578-.175.168-.358.35-.157.697.202.348.898 1.483 1.933 2.406 1.334 1.192 2.458 1.562 2.808 1.734.35.172.554.144.764-.092.209-.236.902-1.05 1.144-1.41.242-.36.483-.298.806-.182.324.116 2.053.97 2.406 1.146.352.176.586.264.673.41.088.147.088.851-.213 1.7z"/>
-        </svg>
-    </a>
+    <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none flex justify-end px-4"
+         style="width: min(100vw, 420px);">
+            <a href="https://wa.me/628567895905" target="_blank"
+            class="pointer-events-auto bg-white text-[#25D366] p-3 rounded-full shadow-lg hover:bg-gray-100 transition-transform hover:scale-105 flex items-center justify-center border border-gray-100">
+                <img src="images/assets/icon/whatsapp.svg" 
+                    alt="WhatsApp" 
+                    class="w-8 h-8 object-contain">
+            </a>
+    </div>
 
     <x-mobile.navbar active="home" />
 </x-layouts.mobile>
