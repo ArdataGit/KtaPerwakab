@@ -58,7 +58,8 @@
     class="fixed top-0 left-1/2 -translate-x-1/2 w-[390px] z-[9999] flex items-center gap-2 px-4 py-3 text-sm font-medium shadow-lg rounded-b-lg"
     :class="style">
     <span class="text-lg" x-text="icon"></span>
-    <span class="truncate" x-text="snackbar?.message ?? ''"></span>
+    <span class="whitespace-normal break-words leading-snug"
+      x-text="snackbar?.message ?? ''"></span>
 </div>
 
 {{-- Optional fallback listener if server dispatches a browser event somewhere --}}

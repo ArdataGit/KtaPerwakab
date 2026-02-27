@@ -2,8 +2,9 @@
     'active' => 'home'   // menu yang sedang aktif
 ])
 
-<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-[390px] bg-white border-t shadow-lg py-3 z-50">
-    <div class="flex justify-around items-center text-center">
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 bg-white border-t shadow-lg py-3 z-50"
+     style="width: min(100vw, 420px);">
+  <div class="flex justify-around items-center text-center">
 
         {{-- HOME --}}
         <a href="{{ route('mobile.home') }}" class="flex flex-col items-center 

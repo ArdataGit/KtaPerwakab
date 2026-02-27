@@ -1,5 +1,4 @@
 <?php
-
 use App\Services\MarketplaceApiService;
 use Livewire\WithFileUploads;
 use function Livewire\Volt\state;
@@ -10,27 +9,29 @@ use function Livewire\Volt\mount;
 uses([WithFileUploads::class]);
 
 state([
-    'productId' => null,
-    'product_name' => '',
-    'description' => '',
-    'price' => '',
-    'youtube_link' => '',
-    'photos' => [],
+    'productId'       => null,
+    'product_name'    => '',
+    'category'        => '',                  // ← BARU: kategori
+    'description'     => '',
+    'price'           => '',
+    'youtube_link'    => '',
+    'photos'          => [],
     'existing_photos' => [],
-    'snackbar' => ['type' => '', 'message' => ''],
+    'snackbar'        => ['type' => '', 'message' => ''],
 ]);
 
 mount(function ($id) {
     $this->productId = $id;
-    
+
     $response = MarketplaceApiService::productDetail($id);
-    
+
     if ($response->successful()) {
         $product = $response->json('data');
-        $this->product_name = $product['product_name'];
-        $this->description = $product['description'] ?? '';
-        $this->price = $product['price'];
-        $this->youtube_link = $product['youtube_link'] ?? '';
+        $this->product_name   = $product['product_name'] ?? '';
+        $this->category       = $product['category'] ?? '';           // ← BARU: load kategori
+        $this->description    = $product['description'] ?? '';
+        $this->price          = $product['price'] ?? '';
+        $this->youtube_link   = $product['youtube_link'] ?? '';
         $this->existing_photos = $product['photos'] ?? [];
     } else {
         $this->snackbar = ['type' => 'error', 'message' => 'Produk tidak ditemukan'];
@@ -40,12 +41,12 @@ mount(function ($id) {
 $deletePhoto = function ($photoId) {
     try {
         \Log::info('Attempting to delete photo', ['photo_id' => $photoId]);
-        
+
         $response = MarketplaceApiService::deletePhoto($photoId);
-        
+
         \Log::info('Delete photo response', [
             'status' => $response->status(),
-            'body' => $response->body()
+            'body'   => $response->body()
         ]);
 
         if ($response->failed()) {
@@ -55,7 +56,7 @@ $deletePhoto = function ($photoId) {
             return;
         }
 
-        // Refresh data produk
+        // Refresh data produk setelah hapus
         $response = MarketplaceApiService::productDetail($this->productId);
         if ($response->successful()) {
             $product = $response->json('data');
@@ -63,7 +64,7 @@ $deletePhoto = function ($photoId) {
         }
 
         $this->snackbar = ['type' => 'success', 'message' => 'Foto berhasil dihapus'];
-        
+
     } catch (\Exception $e) {
         \Log::error('Exception deleting photo', ['error' => $e->getMessage()]);
         $this->snackbar = ['type' => 'error', 'message' => 'Error: ' . $e->getMessage()];
@@ -71,11 +72,12 @@ $deletePhoto = function ($photoId) {
 };
 
 rules([
-    'product_name' => 'required|string|max:255',
-    'description' => 'nullable|string',
-    'price' => 'required|numeric|min:0',
-    'youtube_link' => 'nullable|url',
-    'photos.*' => 'image|mimes:jpeg,jpg,png|max:2048',
+    'product_name'   => 'required|string|max:255',
+    'category'       => 'required|string|in:Makanan,Minuman,Kerajinan,Fashion,Jasa,Pertanian,Perikanan,Lainnya', // ← BARU
+    'description'    => 'nullable|string',
+    'price'          => 'required|numeric|min:0',
+    'youtube_link'   => 'nullable|url',
+    'photos.*'       => 'image|mimes:jpeg,jpg,png|max:2048',
 ]);
 
 $submit = function () {
@@ -83,13 +85,14 @@ $submit = function () {
 
     try {
         $data = [
-            'product_name' => $this->product_name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'youtube_link' => $this->youtube_link,
+            'product_name'   => $this->product_name,
+            'category'       => $this->category,              // ← BARU: kirim kategori
+            'description'    => $this->description,
+            'price'          => $this->price,
+            'youtube_link'   => $this->youtube_link,
         ];
 
-        // Hanya tambahkan photos jika ada upload baru
+        // Hanya kirim photos jika ada upload baru
         if (!empty($this->photos)) {
             $data['photos'] = $this->photos;
         }
@@ -103,7 +106,7 @@ $submit = function () {
 
         $this->snackbar = ['type' => 'success', 'message' => 'Produk berhasil diupdate'];
         $this->js('setTimeout(() => window.location.href = "/my-product", 1500)');
-        
+
     } catch (\Exception $e) {
         $this->snackbar = ['type' => 'error', 'message' => 'Error: ' . $e->getMessage()];
     }
@@ -143,37 +146,57 @@ $submit = function () {
         <p class="text-white font-semibold text-base">Edit Produk</p>
     </div>
 
-    <div class="px-4 mt-4 space-y-4 pb-24">
+    <div class="px-4 mt-4 space-y-5 pb-24">
 
         <!-- FOTO EXISTING -->
         @if(!empty($existing_photos))
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Foto Saat Ini</label>
-            <div class="flex gap-2 overflow-x-auto">
-                @foreach($existing_photos as $photo)
-                    <div class="relative flex-shrink-0">
-                        <img src="{{ api_product_url($photo['file_path']) }}" 
-                             class="w-20 h-20 rounded-lg object-cover">
-                        <button 
-                            type="button"
-                            onclick="if(confirm('Hapus foto ini?')) { @this.call('deletePhoto', {{ $photo['id'] }}) }"
-                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-lg hover:bg-red-600">
-                            ×
-                        </button>
-                    </div>
-                @endforeach
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Saat Ini</label>
+                <div class="flex gap-3 overflow-x-auto pb-2">
+                    @foreach($existing_photos as $photo)
+                        <div class="relative flex-shrink-0">
+                            <img src="{{ api_product_url($photo['file_path']) }}"
+                                 class="w-24 h-24 rounded-xl object-cover border border-gray-200 shadow-sm">
+                            <button
+                                type="button"
+                                onclick="if(confirm('Yakin ingin menghapus foto ini?')) { @this.call('deletePhoto', {{ $photo['id'] }}) }"
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-base font-bold shadow-lg hover:bg-red-600 transition">
+                                ×
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Klik tombol × untuk menghapus foto</p>
             </div>
-            <p class="text-xs text-gray-500 mt-1">Klik tombol × untuk menghapus foto</p>
-        </div>
         @endif
 
         <!-- NAMA PRODUK -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
-            <input type="text" wire:model="product_name"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan nama produk">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk <span class="text-red-500">*</span></label>
+            <input type="text" wire:model.live="product_name"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="Masukkan nama produk">
             @error('product_name')
+                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- KATEGORI (BARU) -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Produk <span class="text-red-500">*</span></label>
+            <select wire:model.live="category"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm bg-white">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Makanan">Makanan</option>
+                <option value="Minuman">Minuman</option>
+                <option value="Kerajinan">Kerajinan</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Jasa">Jasa</option>
+                <option value="Pertanian">Pertanian</option>
+                <option value="Perikanan">Perikanan</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+            @error('category')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -182,8 +205,8 @@ $submit = function () {
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (Opsional)</label>
             <textarea wire:model="description" rows="4"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan deskripsi produk"></textarea>
+                      class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm resize-none"
+                      placeholder="Masukkan deskripsi produk, bahan, ukuran, dll..."></textarea>
             @error('description')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -191,10 +214,10 @@ $submit = function () {
 
         <!-- HARGA -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
-            <input type="number" wire:model="price"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan harga">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp) <span class="text-red-500">*</span></label>
+            <input type="number" wire:model.live="price" min="0" step="1"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="Contoh: 50000">
             @error('price')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -204,8 +227,8 @@ $submit = function () {
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Link YouTube (Opsional)</label>
             <input type="url" wire:model="youtube_link"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="https://youtube.com/...">
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="https://www.youtube.com/watch?v=...">
             @error('youtube_link')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -214,9 +237,12 @@ $submit = function () {
         <!-- FOTO PRODUK BARU -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Upload Foto Baru (Opsional)</label>
-            <input type="file" wire:model="photos" multiple accept="image/jpeg,image/jpg,image/png"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none">
-            <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah foto (jpeg, jpg, png - max 2MB per foto)</p>
+            <input type="file" wire:model.live="photos" multiple accept="image/jpeg,image/jpg,image/png"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+            <p class="text-xs text-gray-500 mt-2">Kosongkan jika tidak ingin menambah foto baru (jpeg, jpg, png - max 2MB per foto)</p>
+            @error('photos.*')
+                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+            @enderror
             @error('photos')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -224,12 +250,11 @@ $submit = function () {
 
         <!-- BUTTON SUBMIT -->
         <button wire:click="submit"
-            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 active:bg-green-800">
+                class="w-full bg-green-600 text-white py-4 rounded-xl font-semibold text-base hover:bg-green-700 active:bg-green-800 transition mt-6 shadow-md">
             Update Produk
         </button>
 
     </div>
 
     <x-mobile.navbar active="produk" />
-
 </x-layouts.mobile>

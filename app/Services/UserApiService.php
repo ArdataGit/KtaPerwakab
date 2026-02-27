@@ -24,6 +24,12 @@ class UserApiService
             ->post(env('API_BASE_URL') . '/user/profile', $payload);
     }
 
+  	public static function deleteFamilyMember($token, $id)
+    {
+        return \Http::withToken($token)
+            ->delete(env('API_BASE_URL') . "/user/family/{$id}");
+    }
+
     /**
      * Update profile + photo (multipart)
      */

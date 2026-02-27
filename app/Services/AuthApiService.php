@@ -14,10 +14,38 @@ class AuthApiService
         ]);
     }
 
-    public static function register($payload)
-    {
-        return Http::post(env('API_BASE_URL') . '/register', $payload);
+public static function register(array $payload, array $files = [])
+{
+    $request = Http::asMultipart();
+
+    // field biasa
+    foreach ($payload as $key => $value) {
+        if (!is_null($value)) {
+            $request->attach($key, (string) $value);
+        }
     }
+
+    // file upload
+    foreach ($files as $key => $file) {
+
+        if (!$file) continue;
+
+        $path = $file->getRealPath();
+
+        if (!$path || !file_exists($path)) {
+            continue; // hindari error contents required
+        }
+
+        $request->attach(
+            $key,
+            fopen($path, 'r'), // 🔥 lebih aman daripada file_get_contents
+            $file->getClientOriginalName()
+        );
+    }
+
+    return $request->post(env('API_BASE_URL') . '/register');
+}
+
 
     public static function me(string $token)
     {

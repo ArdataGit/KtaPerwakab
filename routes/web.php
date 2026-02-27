@@ -2,6 +2,8 @@
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
 use App\Services\AuthApiService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +23,26 @@ Route::get('/pdf-proxy', function () {
         'Content-Type' => 'application/pdf',
         'X-Frame-Options' => 'SAMEORIGIN',
     ]);
+});
+
+
+Route::get('/proxy-pdf', function (Request $request) {
+    $url = $request->query('url');
+    $token = session('token');
+
+    if (!$url || !$token) {
+        abort(403);
+    }
+
+    $response = Http::withToken($token)->get($url);
+
+    if (!$response->successful()) {
+        abort(404);
+    }
+
+    return response($response->body(), 200)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'inline; filename="file.pdf"');
 });
 
 // routes/web.php

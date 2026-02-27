@@ -37,6 +37,7 @@ $load = function () {
 
     $this->user  = $user;
     $this->saldo = (int) ($user['point'] ?? 0);
+  
 
     $userId = $user['id'];
 
@@ -53,13 +54,6 @@ $load = function () {
         if (is_array($data)) {
             $this->historyTambah = $data;
             
-            // Ambil saldo dari user session atau item pertama jika ada
-            if (!empty($data) && isset($data[0]['user_saldo'])) {
-                $this->saldo = (int) $data[0]['user_saldo'];
-            } else {
-                // Fallback ke session user jika ada
-                $this->saldo = (int) ($this->user['saldo_point'] ?? 0);
-            }
         }
 
     /**

@@ -110,8 +110,9 @@ $submit = function () {
                 <h1 class="text-center font-bold text-xl mb-4">Masuk</h1>
 
                 {{-- EMAIL --}}
-                <x-mobile.input wire:model.defer="email" placeholder="Email" type="email"
-                    :invalid="$snackbar['type'] === 'error' && !$email" :errorMessage="$snackbar['type'] === 'error' && !$email ? 'Email wajib diisi' : null" />
+                <x-mobile.input wire:model.defer="email" placeholder="Username Atau Nomor Telepon" 
+    type="text"
+                    :invalid="$snackbar['type'] === 'error' && !$email" :errorMessage="$snackbar['type'] === 'error' && !$email ? 'Username atau Nomor telepon wajib diisi' : null" />
 
                 {{-- PASSWORD --}}
                 <x-mobile.input wire:model.defer="password" placeholder="Password" type="password"
@@ -119,9 +120,30 @@ $submit = function () {
 
 
                 {{-- BUTTON LOGIN --}}
-                <x-mobile.button class="mt-4" wire:click="submit">
-                    Masuk Sekarang
-                </x-mobile.button>
+              <x-mobile.button
+                  class="mt-4 flex items-center justify-center gap-2"
+                  wire:click="submit"
+                  wire:loading.attr="disabled"
+                  wire:target="submit"
+              >
+                  {{-- Normal --}}
+                  <span wire:loading.remove wire:target="submit">
+                      Masuk Sekarang
+                  </span>
+
+                  {{-- Loading --}}
+                  <span wire:loading wire:target="submit" class="flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10"
+                              stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                      </svg>
+                      Memproses...
+                  </span>
+              </x-mobile.button>
+
 
                 {{-- FORGOT --}}
                 <a href="/forgot-password">

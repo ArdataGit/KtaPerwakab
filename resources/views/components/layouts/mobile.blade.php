@@ -1,3 +1,4 @@
-<div class="bg-white w-[390px] min-h-screen  shadow-2xl overflow-y-auto" style="justify-self: center;">
+<div class="bg-white min-h-screen shadow-2xl overflow-y-auto mx-auto"
+     style="width: min(100vw, 420px);">
     {{ $slot }}
 </div>

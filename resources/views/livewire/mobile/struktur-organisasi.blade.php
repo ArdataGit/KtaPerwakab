@@ -33,10 +33,10 @@ mount(function () {
 
     $this->loading = false;
 });
-
 ?>
 
 <x-layouts.mobile title="Struktur Organisasi">
+
     {{-- HEADER --}}
     <div class="w-full bg-green-600 px-4 py-4 flex items-center space-x-3 rounded-b-2xl">
         <button onclick="window.history.back()">
@@ -45,15 +45,18 @@ mount(function () {
         <p class="text-white font-semibold text-base">Struktur Organisasi</p>
     </div>
 
-    <div class="px-4 py-6" x-data="{ showFullscreen: false }">
+    <div class="px-4 py-6">
+
         @if($loading)
             <div class="flex items-center justify-center py-20">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             </div>
+
         @elseif($error)
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
                 <p class="text-red-600">{{ $error }}</p>
             </div>
+
         @elseif($struktur && isset($struktur['file_url']))
             @php
                 $fileUrl = $struktur['file_url'];
@@ -62,77 +65,98 @@ mount(function () {
                 $isPdf = $extension === 'pdf';
             @endphp
 
+            {{-- ================= IMAGE ================= --}}
             @if($isImage)
-                {{-- Tampilan untuk gambar --}}
-                <div class="bg-white rounded-lg shadow-sm p-2">
-                    <img src="{{ $fileUrl }}" alt="Struktur Organisasi"
-                        class="w-full h-auto rounded-lg">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <img src="{{ $fileUrl }}"
+                         alt="Struktur Organisasi"
+                         class="w-full h-auto">
                 </div>
 
-                {{-- Fullscreen Modal untuk Image --}}
-                <div x-show="showFullscreen" 
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     @click="showFullscreen = false"
-                     class="fixed inset-0 z-[9999] bg-black/90 overflow-auto"
-                     style="display: none;">
-                    
-                    {{-- Header dengan tombol close --}}
-                    <div class="sticky top-0 right-0 flex justify-end p-4 z-10">
-                        <button @click="showFullscreen = false" 
-                                class="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    {{-- Container gambar dengan ukuran penuh --}}
-                    <div class="min-h-screen flex items-center justify-center p-4" @click.stop>
-                        <img src="{{ $fileUrl }}" 
-                             alt="Struktur Organisasi" 
-                             class="w-auto h-auto max-w-full">
-                    </div>
-                </div>
-
+            {{-- ================= PDF ================= --}}
             @elseif($isPdf)
-                {{-- Tampilan untuk PDF --}}
-                <div class="space-y-4">
-                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                        <iframe 
-                            src="/pdf-proxy?url={{ urlencode($fileUrl) }}" 
-                            class="w-full border-0" style="min-height:30rem;">
-                        </iframe>
-                    </div>
-
-                    <a href="{{ $fileUrl }}" target="_blank"
-                        class="block w-full bg-green-600 text-white text-center py-3 rounded-xl font-semibold">
-                        Buka PDF di Tab Baru
-                    </a>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div id="pdf-container" class="w-full flex justify-center">
+                    <canvas id="pdf-render" class="w-full"></canvas>
                 </div>
+            </div>
 
+            <div class="mt-4">
+                <a href="{{ url('/proxy-pdf?url=' . urlencode($fileUrl)) }}"
+                   target="_blank"
+                   class="block w-full bg-green-600 text-white text-center py-3 rounded-xl font-semibold">
+                    Buka di PDF Viewer
+                </a>
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const url = "{{ url('/proxy-pdf?url=' . urlencode($fileUrl)) }}";
+                const container = document.getElementById('pdf-container');
+                const canvas = document.getElementById('pdf-render');
+                const context = canvas.getContext('2d');
+
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                    pdf.getPage(1).then(function(page) {
+
+                        const viewport = page.getViewport({ scale: 1 });
+
+                        const containerWidth = container.clientWidth;
+                        const scale = containerWidth / viewport.width;
+
+                        const outputScale = window.devicePixelRatio || 1;
+
+                        const scaledViewport = page.getViewport({ scale: scale });
+
+                        // Set actual canvas size (high resolution)
+                        canvas.width = scaledViewport.width * outputScale;
+                        canvas.height = scaledViewport.height * outputScale;
+
+                        // Set CSS size (normal size)
+                        canvas.style.width = scaledViewport.width + "px";
+                        canvas.style.height = scaledViewport.height + "px";
+
+                        context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+
+                        page.render({
+                            canvasContext: context,
+                            viewport: scaledViewport
+                        });
+                    });
+                });
+
+            });
+            </script>
+
+            {{-- ================= FILE LAIN ================= --}}
             @else
-                {{-- File tidak didukung --}}
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-                    <p class="text-yellow-700 mb-4">Format file tidak didukung untuk ditampilkan</p>
-                    <a href="{{ $fileUrl }}" target="_blank"
-                        class="inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-semibold">
+                    <p class="text-yellow-700 mb-4">
+                        Format file tidak didukung untuk ditampilkan
+                    </p>
+                    <a href="{{ $fileUrl }}"
+                       target="_blank"
+                       class="inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-semibold">
                         Download File
                     </a>
                 </div>
             @endif
+
         @else
             <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                <p class="text-gray-600">Data struktur organisasi tidak tersedia</p>
+                <p class="text-gray-600">
+                    Data struktur organisasi tidak tersedia
+                </p>
             </div>
         @endif
+
     </div>
 
     <div class="h-20"></div>
 
     <x-mobile.navbar active="home" />
+
 </x-layouts.mobile>

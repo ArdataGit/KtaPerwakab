@@ -1,5 +1,4 @@
 <?php
-
 use App\Services\MarketplaceApiService;
 use Livewire\WithFileUploads;
 use function Livewire\Volt\state;
@@ -9,20 +8,22 @@ use function Livewire\Volt\uses;
 uses([WithFileUploads::class]);
 
 state([
-    'product_name' => '',
-    'description' => '',
-    'price' => '',
-    'youtube_link' => '',
-    'photos' => [],
-    'snackbar' => ['type' => '', 'message' => ''],
+    'product_name'   => '',
+    'category'       => '',           // ← BARU: kategori
+    'description'    => '',
+    'price'          => '',
+    'youtube_link'   => '',
+    'photos'         => [],
+    'snackbar'       => ['type' => '', 'message' => ''],
 ]);
 
 rules([
-    'product_name' => 'required|string|max:255',
-    'description' => 'nullable|string',
-    'price' => 'required|numeric|min:0',
-    'youtube_link' => 'nullable|url',
-    'photos.*' => 'image|mimes:jpeg,jpg,png|max:2048',
+    'product_name'   => 'required|string|max:255',
+    'category'       => 'required|string|in:Makanan,Minuman,Kerajinan,Fashion,Jasa,Pertanian,Perikanan,Lainnya', // ← BARU
+    'description'    => 'nullable|string',
+    'price'          => 'required|numeric|min:0',
+    'youtube_link'   => 'nullable|url',
+    'photos.*'       => 'image|mimes:jpeg,jpg,png|max:2048',
 ]);
 
 $submit = function () {
@@ -36,11 +37,12 @@ $submit = function () {
 
     try {
         $response = MarketplaceApiService::store([
-            'product_name' => $this->product_name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'youtube_link' => $this->youtube_link,
-            'photos' => $this->photos,
+            'product_name'   => $this->product_name,
+            'category'       => $this->category,          // ← BARU: kirim ke API
+            'description'    => $this->description,
+            'price'          => $this->price,
+            'youtube_link'   => $this->youtube_link,
+            'photos'         => $this->photos,
         ]);
 
         if ($response->failed()) {
@@ -90,15 +92,35 @@ $submit = function () {
         <p class="text-white font-semibold text-base">Tambah Produk</p>
     </div>
 
-    <div class="px-4 mt-4 space-y-4 pb-24">
+    <div class="px-4 mt-4 space-y-5 pb-24">
 
         <!-- NAMA PRODUK -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
-            <input type="text" wire:model="product_name"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan nama produk">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk <span class="text-red-500">*</span></label>
+            <input type="text" wire:model.live="product_name"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="Masukkan nama produk">
             @error('product_name')
+                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- KATEGORI (BARU) -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Produk <span class="text-red-500">*</span></label>
+            <select wire:model.live="category"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm bg-white">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Makanan">Makanan</option>
+                <option value="Minuman">Minuman</option>
+                <option value="Kerajinan">Kerajinan</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Jasa">Jasa</option>
+                <option value="Pertanian">Pertanian</option>
+                <option value="Perikanan">Perikanan</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+            @error('category')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -107,8 +129,8 @@ $submit = function () {
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (Opsional)</label>
             <textarea wire:model="description" rows="4"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan deskripsi produk"></textarea>
+                      class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm resize-none"
+                      placeholder="Masukkan deskripsi produk, bahan, ukuran, dll..."></textarea>
             @error('description')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -116,10 +138,10 @@ $submit = function () {
 
         <!-- HARGA -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
-            <input type="number" wire:model="price"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="Masukkan harga">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp) <span class="text-red-500">*</span></label>
+            <input type="number" wire:model.live="price" min="0" step="1"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="Contoh: 50000">
             @error('price')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -129,8 +151,8 @@ $submit = function () {
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Link YouTube (Opsional)</label>
             <input type="url" wire:model="youtube_link"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none"
-                placeholder="https://youtube.com/...">
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm"
+                   placeholder="https://www.youtube.com/watch?v=...">
             @error('youtube_link')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -138,10 +160,13 @@ $submit = function () {
 
         <!-- FOTO PRODUK -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Foto Produk</label>
-            <input type="file" wire:model="photos" multiple accept="image/jpeg,image/jpg,image/png"
-                class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-200 focus:outline-none">
-            <p class="text-xs text-gray-500 mt-1">Upload minimal 1 foto (jpeg, jpg, png - max 2MB per foto)</p>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Foto Produk <span class="text-red-500">*</span></label>
+            <input type="file" wire:model.live="photos" multiple accept="image/jpeg,image/jpg,image/png"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+            <p class="text-xs text-gray-500 mt-2">Upload minimal 1 foto (jpeg, jpg, png - max 2MB per foto)</p>
+            @error('photos.*')
+                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+            @enderror
             @error('photos')
                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -149,12 +174,11 @@ $submit = function () {
 
         <!-- BUTTON SUBMIT -->
         <button wire:click="submit"
-            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 active:bg-green-800">
+                class="w-full bg-green-600 text-white py-4 rounded-xl font-semibold text-base hover:bg-green-700 active:bg-green-800 transition mt-6 shadow-md">
             Simpan Produk
         </button>
 
     </div>
 
     <x-mobile.navbar active="produk" />
-
 </x-layouts.mobile>
