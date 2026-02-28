@@ -1,10 +1,8 @@
 <x-layouts.mobile title="Kartu Tanda Anggota">
     @php
-        use App\Services\AuthApiService;
-
         $token = session('token');
         if ($token) {
-            $response = AuthApiService::me($token);
+            $response = \App\Services\AuthApiService::me($token);
             if ($response->successful()) {
                 $user = $response->json('data');
                 session(['user' => $user]);

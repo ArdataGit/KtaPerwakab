@@ -31,8 +31,8 @@ mount(function () {
 
 <x-layouts.mobile title="Sejarah Organisasi">
     {{-- HEADER --}}
-    <div class="fixed top-0 left-0 right-0 z-50 bg-green-600 px-4 py-4 flex items-center space-x-3 shadow-md max-w-[480px] mx-auto rounded-b-2xl">
-        <button onclick="window.history.back()" class="focus:outline-none">
+    <div class="w-full bg-green-600 px-4 py-4 flex items-center space-x-3 rounded-b-2xl">
+        <button onclick="window.history.back()">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
