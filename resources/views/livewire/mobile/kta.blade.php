@@ -32,6 +32,14 @@
         $id = $u['kta_id'] ?? '-';
         $expired = $u['expired_at'] ? date('d M Y', strtotime($u['expired_at'])) : '-';
         $photo = api_profile_url($u['profile_photo'] ?? null);
+
+        $ktaTemplate = null;
+        $ktaResponse = \App\Services\KtaTemplateApiService::getActive();
+        if ($ktaResponse->successful()) {
+            $ktaTemplate = $ktaResponse->json('data');
+        }
+        $frontImage = $ktaTemplate['front_image'] ?? '/images/assets/kta/kta_depan.png';
+        $backImage  = $ktaTemplate['back_image']  ?? '/images/assets/kta/kta_belakang.png';
     @endphp
     <div class="px-6 mt-6 flex justify-center">
         <div x-data="{ side: 'front', flip(){ this.side = this.side === 'front' ? 'back' : 'front' } }"
@@ -41,7 +49,7 @@
                 <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
                     {{-- ============= FRONT SIDE ============= --}}
                     <div class="face face-front bg-white rounded-2xl shadow-lg overflow-hidden ">
-                        <img src="/images/assets/kta/kta_depan.png" class="w-full object-contain">
+                        <img src="{{ $frontImage }}" class="w-full object-contain">
                         {{-- FOTO USER --}}
                         <img src="{{ $photo }}"
                             class="absolute top-[105px] left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
@@ -64,7 +72,7 @@
                     {{-- ============= BACK SIDE ============= --}}
                     <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden ">
                         {{-- TEMPLATE BACKGROUND --}}
-                        <img src="/images/assets/kta/kta_belakang.png" class="w-full object-contain">
+                        <img src="{{ $backImage }}" class="w-full object-contain">
                         {{-- HEADER VISI --}}
                         <div class="absolute top-[100px] left-0 w-full text-center">
                             <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">

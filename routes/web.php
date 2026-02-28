@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Http;
 
 /* |-------------------------------------------------------------------------- | MOBILE PUBLIC ROUTES (TANPA LOGIN) |-------------------------------------------------------------------------- */
 Volt::route('/', 'mobile.splash')->name('mobile.splash');
+
+// KTA Template: get active (public JSON endpoint)
+Route::get('/kta-templates/active', [\App\Http\Controllers\KtaTemplateController::class , 'getActive'])->name('kta-templates.active');
 // routes/web.php
 Route::get('/pdf-proxy', function () {
     $url = request('url');
