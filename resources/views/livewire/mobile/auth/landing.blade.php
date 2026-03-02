@@ -38,4 +38,23 @@
 
     </div>
 
+    <!-- Redirect desktop users straight to the premium login page -->
+    <x-slot:desktop>
+        <div class="min-h-screen bg-green-700 flex items-center justify-center relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-green-600 rounded-full mix-blend-multiply opacity-50 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-emerald-500 rounded-full mix-blend-multiply opacity-50 blur-3xl"></div>
+            
+            <div class="relative z-10 text-center animate-pulse">
+                <img src="/images/assets/logo.png" class="w-48 mx-auto drop-shadow-2xl" onerror="this.src='/images/assets/iuran.png'">
+            </div>
+            
+            <script>
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 500);
+            </script>
+        </div>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

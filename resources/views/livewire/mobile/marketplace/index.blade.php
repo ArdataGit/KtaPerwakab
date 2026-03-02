@@ -162,4 +162,69 @@ updated([
 
     <!-- BOTTOM NAV -->
     <x-mobile.navbar active="marketplace" />
+
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="M-UMKM">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Marketplace UMKM</h1>
+                        <p class="text-gray-500 mt-1">Temukan produk-produk unggulan UMKM anggota Perwakab.</p>
+                    </div>
+                    @if($role === 'anggota')
+                        <a href="{{ route('mobile.my-products.create') }}"
+                           class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:-translate-y-0.5 shadow-md shadow-green-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                            Tambah Produk
+                        </a>
+                    @endif
+                </div>
+
+                {{-- SEARCH + FILTER --}}
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <div class="relative flex-1">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                        </span>
+                        <input type="text" wire:model.live="search" placeholder="Cari produk UMKM..."
+                            class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition">
+                    </div>
+                    <select wire:model.live="category"
+                        class="w-full md:w-48 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-500 transition bg-white">
+                        <option value="">Semua Kategori</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat }}">{{ $cat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- PRODUCT GRID --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    @forelse ($products as $product)
+                        @php
+                            $image = api_product_url(data_get($product, 'photos.0.file_path'));
+                        @endphp
+                        <a href="{{ route('mobile.marketplace.show', $product['id']) }}"
+                            class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="{{ $image }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                            <div class="p-4 space-y-2">
+                                <h3 class="font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-green-700 transition-colors">{{ $product['product_name'] }}</h3>
+                                <p class="text-xs text-gray-500">{{ $product['umkm']['user']['name'] ?? '-' }}</p>
+                                <p class="text-green-600 font-bold text-lg">Rp {{ number_format((float) $product['price'], 0, ',', '.') }}</p>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
+                            <svg class="w-16 h-16 mb-4 opacity-40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                            <p class="text-sm font-medium">Produk belum tersedia</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

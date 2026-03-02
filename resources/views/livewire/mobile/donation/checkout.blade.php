@@ -121,4 +121,38 @@ mount(function ($id) {
 
     <x-mobile.navbar active="donasi" />
 
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Detail Donasi">
+            <div class="max-w-xl mx-auto">
+                <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                    <a href="javascript:history.back()" class="hover:text-green-600 transition">&larr; Kembali</a>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Detail Pembayaran</h1>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-3 text-sm mb-6">
+                    <div class="flex justify-between"><span class="text-gray-500">Nama Campaign</span><span class="font-semibold text-gray-900">{{ $campaignName }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Nominal Donasi</span><span>Rp {{ number_format($amount, 0, ',', '.') }}</span></div>
+                    <hr>
+                    <div class="flex justify-between text-base font-bold text-gray-900"><span>Total Transfer</span><span>Rp {{ number_format($amount, 0, ',', '.') }}</span></div>
+                </div>
+
+                <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 space-y-4 text-sm mb-6">
+                    <div><p class="text-gray-500">Metode Pembayaran</p><p class="font-semibold text-gray-900">{{ $paymentName }}</p></div>
+                    <div class="flex items-center justify-between">
+                        <div><p class="text-gray-500">Nomor VA / Kode Bayar</p><p class="font-semibold text-gray-900 text-lg">{{ $accountNumber }}</p></div>
+                        <button onclick="navigator.clipboard.writeText('{{ $accountNumber }}')" class="text-xs px-4 py-2 border border-green-600 text-green-600 rounded-full hover:bg-green-50 transition">Salin</button>
+                    </div>
+                    <div><p class="text-gray-500">Atas Nama</p><p class="font-semibold text-gray-900">{{ $accountName }}</p></div>
+                </div>
+
+                <div class="text-center mb-6">
+                    <span class="inline-block px-4 py-2 border border-gray-200 rounded-full text-xs text-gray-600">Batas Pembayaran {{ $expiredAt->format('d M Y • H:i') }}</span>
+                </div>
+
+                <button onclick="window.location.href='{{ $checkoutUrl }}'" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl transition shadow-md shadow-green-200">Bayar Sekarang</button>
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

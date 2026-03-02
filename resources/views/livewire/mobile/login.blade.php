@@ -163,4 +163,111 @@ $submit = function () {
 
     </div>
 
+    <!-- ================== DESKTOP VIEW ================== -->
+    <x-slot:desktop>
+        <div class="min-h-screen bg-gray-50 flex">
+            <!-- Left Side: Interactive Branding / Image -->
+            <div class="hidden lg:flex w-1/2 bg-green-700 items-center justify-center relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-green-600 rounded-full mix-blend-multiply opacity-50 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-emerald-500 rounded-full mix-blend-multiply opacity-50 blur-3xl"></div>
+                
+                <div class="relative z-10 p-12 text-white flex flex-col justify-center h-full max-w-lg">
+                    <img src="/images/assets/logo.png" class="w-32 mb-8 drop-shadow-lg bg-white/10 p-4 rounded-3xl backdrop-blur-md border border-white/20" onerror="this.src='/images/assets/iuran.png'">
+                    <h1 class="text-5xl font-extrabold mb-6 leading-tight tracking-tight">Platform Layanan<br>KTA Digital Perwakab</h1>
+                    <p class="text-lg text-green-100 mb-10 leading-relaxed font-medium">Masuk untuk mengelola profil, melihat informasi kegiatan, mengakses jejaring usaha, dan menikmati seluruh layanan terpadu secara langsung dari komputer Anda.</p>
+                    
+                    <div class="flex items-center space-x-6">
+                        <div class="flex -space-x-4">
+                            <img class="w-12 h-12 rounded-full border-4 border-green-700 object-cover" src="https://ui-avatars.com/api/?name=Agus&background=random" alt="Member 1">
+                            <img class="w-12 h-12 rounded-full border-4 border-green-700 object-cover" src="https://ui-avatars.com/api/?name=Budi&background=random" alt="Member 2">
+                            <img class="w-12 h-12 rounded-full border-4 border-green-700 object-cover" src="https://ui-avatars.com/api/?name=Siti&background=random" alt="Member 3">
+                        </div>
+                        <div class="h-10 border-l border-green-600/50"></div>
+                        <div class="text-sm">
+                            <div class="font-bold text-white text-lg">10,000+</div>
+                            <div class="text-green-200">Anggota Aktif</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative">
+                
+                <div class="w-full max-w-md mx-auto relative z-10">
+                    <!-- Mobile logo if shown on tablet without side image -->
+                    <div class="lg:hidden flex justify-center mb-8">
+                        <img src="/images/assets/logo.png" class="w-24">
+                    </div>
+
+                    <div class="mb-10 text-center lg:text-left">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang 👋</h2>
+                        <p class="text-gray-500">Silakan masukkan detail akun Anda untuk melanjutkan.</p>
+                    </div>
+
+                    <!-- Alert / Error Snackbar -->
+                    @if($snackbar['message'] && $snackbar['type'] === 'error')
+                    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-center shadow-sm">
+                        <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                        <p class="text-sm font-medium text-red-800">{{ $snackbar['message'] }}</p>
+                    </div>
+                    @endif
+                    @if($snackbar['message'] && $snackbar['type'] === 'success')
+                    <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg flex items-center shadow-sm">
+                        <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <p class="text-sm font-medium text-green-800">{{ $snackbar['message'] }}</p>
+                    </div>
+                    @endif
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Username atau Nomor Telepon</label>
+                            <input wire:model.defer="email" type="text" 
+                                class="w-full px-4 py-3.5 rounded-xl border {{ $snackbar['type'] === 'error' && !$email ? 'border-red-300 ring-2 ring-red-100' : 'border-gray-200 focus:border-green-500 text-gray-800 focus:ring-4 focus:ring-green-100' }} transition outline-none font-medium" 
+                                placeholder="Masukkan identitas login"
+                                wire:keydown.enter="submit">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-bold text-gray-700">Password</label>
+                                <a href="/forgot-password" class="text-sm font-bold text-green-600 hover:text-green-800 transition">Lupa password?</a>
+                            </div>
+                            <input wire:model.defer="password" type="password" 
+                                class="w-full px-4 py-3.5 rounded-xl border {{ $snackbar['type'] === 'error' && !$password ? 'border-red-300 ring-2 ring-red-100' : 'border-gray-200 focus:border-green-500 text-gray-800 focus:ring-4 focus:ring-green-100' }} transition outline-none font-medium" 
+                                placeholder="••••••••••"
+                                wire:keydown.enter="submit">
+                        </div>
+
+                        <div class="pt-4">
+                            <button wire:click="submit" wire:loading.attr="disabled"
+                                class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-green-200 text-sm font-bold text-white bg-green-600 hover:bg-green-700 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
+                                
+                                <span wire:loading.remove wire:target="submit">
+                                    Masuk Ke Aplikasi
+                                </span>
+                                
+                                <span wire:loading wire:target="submit" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                    </svg>
+                                    Memvalidasi...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-gray-100 text-center">
+                        <p class="text-sm text-gray-500 font-medium">
+                            Baru tergabung dalam keanggotaan?
+                            <a href="/register" class="font-bold text-green-600 hover:text-green-800 ml-1">Daftar sekarang &rarr;</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

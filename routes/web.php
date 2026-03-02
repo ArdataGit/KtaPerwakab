@@ -28,21 +28,54 @@ Route::get('/pdf-proxy', function () {
 
 Route::get('/proxy-pdf', function (Request $request) {
     $url = $request->query('url');
-    $token = session('token');
 
-    if (!$url || !$token) {
+    if (!$url || !filter_var($url, FILTER_VALIDATE_URL)) {
         abort(403);
     }
 
-    $response = Http::withToken($token)->get($url);
+    $token = session('token');
 
-    if (!$response->successful()) {
-        abort(404);
+    // Method 1: Try with Laravel Http client (with token)
+    $body = null;
+    try {
+        $response = $token
+            ? Http::withToken($token)->timeout(15)->get($url)
+            : Http::timeout(15)->get($url);
+
+        if ($response->successful() && strlen($response->body()) > 0) {
+            $body = $response->body();
+        }
+    } catch (\Throwable $e) {
+        // silently fail, try next method
     }
 
-    return response($response->body(), 200)
+    // Method 2: Fallback with file_get_contents
+    if (!$body) {
+        try {
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 15,
+                    'header' => $token ? "Authorization: Bearer {$token}\r\n" : '',
+                ],
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ]);
+            $body = @file_get_contents($url, false, $context);
+        } catch (\Throwable $e) {
+            // silently fail
+        }
+    }
+
+    if (!$body || strlen($body) === 0) {
+        abort(404, 'Could not fetch the PDF file');
+    }
+
+    return response($body, 200)
         ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'inline; filename="file.pdf"');
+        ->header('Content-Disposition', 'inline; filename="file.pdf"')
+        ->header('X-Frame-Options', 'SAMEORIGIN');
 });
 
 // routes/web.php

@@ -230,4 +230,130 @@ $submit = function () {
     @endif
     <div class="h-24"></div>
     <x-mobile.navbar active="donasi" />
+
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Donasi">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                    <a href="{{ route('mobile.donation.index') }}" class="hover:text-green-600 transition">&larr; Kembali ke Donasi</a>
+                </div>
+
+                @if ($campaign)
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {{-- LEFT: Campaign Info --}}
+                        <div class="lg:col-span-2 space-y-6">
+                            {{-- HERO --}}
+                            <div class="rounded-2xl overflow-hidden shadow-lg">
+                                <img src="{{ $campaign['thumbnail'] }}" class="w-full h-80 object-cover">
+                            </div>
+
+                            {{-- CONTENT --}}
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ $campaign['title'] }}</h1>
+
+                                <span class="text-gray-700 text-xs mb-4 block">- Deskripsi -</span>
+                                <div class="prose max-w-none text-gray-700 text-sm leading-relaxed">
+                                    {!! $campaign['description'] ?? 'Deskripsi campaign tidak tersedia.' !!}
+                                </div>
+
+                                @if (isset($campaign['total_collected']))
+                                    <div class="mt-6 space-y-2 bg-gray-50 rounded-xl p-4">
+                                        <p class="text-sm font-semibold text-gray-800">Donasi Terkumpul</p>
+                                        <div class="bg-gray-200 rounded-full h-3">
+                                            <div class="bg-green-500 h-3 rounded-full transition-all" style="width: {{ min(($campaign['total_collected'] / max($campaign['target_amount'] ?? 1000000, 1)) * 100, 100) }}%"></div>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Terkumpul <strong class="text-green-600">Rp{{ number_format($campaign['total_collected'], 0, ',', '.') }}</strong></p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- RIWAYAT --}}
+                            @if (!empty($donationHistories))
+                                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="font-semibold text-gray-800">Riwayat Donasi</h3>
+                                        <a href="{{ route('mobile.donation.histories', $campaign['id']) }}"
+                                            class="text-xs text-green-600 font-semibold hover:text-green-700 transition">Lihat Semua →</a>
+                                    </div>
+                                    <div class="space-y-3">
+                                        @foreach ($donationHistories as $donation)
+                                            <div class="flex justify-between items-center bg-gray-50 rounded-xl px-5 py-3">
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-800">{{ $donation['donor_name'] ?? 'Hamba Allah' }}</p>
+                                                    <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($donation['created_at'])->diffForHumans() }}</p>
+                                                </div>
+                                                <p class="text-sm font-semibold text-green-600">Rp{{ number_format($donation['amount'], 0, ',', '.') }}</p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- RIGHT: Form Donasi --}}
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
+                                @if (!$showForm)
+                                    <div class="text-center">
+                                        <h3 class="font-bold text-lg text-gray-900 mb-2">Berikan Donasi Anda</h3>
+                                        <p class="text-sm text-gray-500 mb-6">Setiap donasi sangat berarti bagi mereka yang membutuhkan.</p>
+                                        <button wire:click="toggleForm"
+                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl text-base transition shadow-md shadow-green-200">
+                                            Donasi Sekarang
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="space-y-5">
+                                        {{-- AMOUNT --}}
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-800 mb-2">Nominal Donasi</p>
+                                            <div class="flex items-center border-2 border-gray-200 rounded-xl px-4 py-3 focus-within:border-green-500 transition">
+                                                <span class="text-base font-semibold mr-2">Rp</span>
+                                                <input type="text" inputmode="numeric" placeholder="Minimal Rp20.000"
+                                                    value="{{ $amount_display }}"
+                                                    class="w-full focus:outline-none text-base" wire:ignore
+                                                    oninput="let raw = this.value.replace(/\D/g,''); this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); @this.set('amount', raw); @this.set('amount_display', this.value);">
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">Minimal donasi Rp20.000</p>
+                                            @error('amount') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                        </div>
+
+                                        {{-- PAYMENT METHOD --}}
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-800 mb-2">Metode Pembayaran</p>
+                                            <select wire:model="payment_method"
+                                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-0 transition">
+                                                <option value="">-- Pilih --</option>
+                                                @foreach ($paymentMethods as $method)
+                                                    <option value="{{ $method['code'] }}">{{ $method['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('payment_method') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                        </div>
+
+                                        {{-- DONOR INFO --}}
+                                        <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+                                            <p class="text-sm font-semibold text-gray-800">Profil Donatur</p>
+                                            <input type="text" wire:model="donor_name" placeholder="Atas Nama"
+                                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm">
+                                            <input type="email" wire:model="donor_email" placeholder="Alamat Email"
+                                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm">
+                                        </div>
+
+                                        <button wire:click="submit"
+                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl text-base transition shadow-md shadow-green-200">
+                                            Lanjutkan Donasi
+                                        </button>
+                                        @error('submit') <p class="text-xs text-red-500 text-center mt-2">{{ $message }}</p> @enderror
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

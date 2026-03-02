@@ -181,4 +181,63 @@ $submit = function () {
     </div>
 
     <x-mobile.navbar active="produk" />
+
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Tambah Produk">
+            <div class="max-w-3xl mx-auto">
+                <div x-data="{ snackbar: @entangle('snackbar'), show: false, icons: { error: '⚠', success: '✔' }, styles: { error: 'bg-red-500 text-white', success: 'bg-green-600 text-white' } }"
+                    x-init="$watch('snackbar', v => { if (v && v.message) { show = true; setTimeout(() => show = false, 2500); } })"
+                    x-show="show" x-transition.opacity class="fixed top-4 right-4 z-[9999] flex items-center gap-2 px-5 py-3 text-sm font-medium shadow-lg rounded-xl" :class="styles[snackbar?.type ?? 'success']">
+                    <span class="text-lg" x-text="icons[snackbar?.type ?? 'success']"></span><span x-text="snackbar?.message ?? ''"></span>
+                </div>
+
+                <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                    <a href="{{ route('mobile.my-products.index') }}" class="hover:text-green-600 transition">&larr; Kembali ke Produk Saya</a>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Tambah Produk Baru</h1>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model.live="product_name" placeholder="Masukkan nama produk" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm bg-gray-50 transition">
+                            @error('product_name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Produk <span class="text-red-500">*</span></label>
+                            <select wire:model.live="category" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm bg-gray-50 transition">
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach(['Makanan','Minuman','Kerajinan','Fashion','Jasa','Pertanian','Perikanan','Lainnya'] as $cat)
+                                    <option value="{{ $cat }}">{{ $cat }}</option>
+                                @endforeach
+                            </select>
+                            @error('category')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp) <span class="text-red-500">*</span></label>
+                            <input type="number" wire:model.live="price" min="0" placeholder="50000" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm bg-gray-50 transition">
+                            @error('price')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (Opsional)</label>
+                            <textarea wire:model="description" rows="4" placeholder="Deskripsi produk, bahan, ukuran..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm bg-gray-50 resize-none transition"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Link YouTube (Opsional)</label>
+                            <input type="url" wire:model="youtube_link" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm bg-gray-50 transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Foto Produk <span class="text-red-500">*</span></label>
+                            <input type="file" wire:model.live="photos" multiple accept="image/jpeg,image/jpg,image/png"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                            <p class="text-xs text-gray-500 mt-2">Upload minimal 1 foto (jpeg, jpg, png - max 2MB per foto)</p>
+                        </div>
+                    </div>
+                    <button wire:click="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-base transition shadow-md shadow-green-200">Simpan Produk</button>
+                </div>
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

@@ -156,4 +156,70 @@ $deleteProduct = function ($id) {
 
     <x-mobile.navbar active="produk" />
 
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Produk Saya">
+            <div class="max-w-5xl mx-auto">
+
+                {{-- SNACKBAR --}}
+                <div x-data="{ snackbar: @entangle('snackbar'), show: false, icons: { error: '⚠', success: '✔' }, styles: { error: 'bg-red-500 text-white', success: 'bg-green-600 text-white' } }"
+                    x-init="$watch('snackbar', value => { if (value && value.message) { show = true; setTimeout(() => show = false, 2500); } })"
+                    x-show="show" x-transition.opacity class="fixed top-4 right-4 z-[9999] flex items-center gap-2 px-5 py-3 text-sm font-medium shadow-lg rounded-xl" :class="styles[snackbar?.type ?? 'success']">
+                    <span class="text-lg" x-text="icons[snackbar?.type ?? 'success']"></span>
+                    <span x-text="snackbar?.message ?? ''"></span>
+                </div>
+
+                <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                    <a href="{{ route('mobile.profile') }}" class="hover:text-green-600 transition">&larr; Kembali ke Profil</a>
+                </div>
+
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Produk Saya</h1>
+                        <p class="text-gray-500 mt-1">Kelola produk UMKM yang Anda jual.</p>
+                    </div>
+                    <a href="{{ route('mobile.my-products.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md shadow-green-200 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                        Tambah Produk
+                    </a>
+                </div>
+
+                <div class="mb-6">
+                    <select wire:model="status" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-green-500 bg-white min-w-[180px]">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Disetujui</option>
+                        <option value="rejected">Ditolak</option>
+                    </select>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse ($products as $item)
+                        @php $photo = $item['photos'][0]['file_path'] ?? null; $image = api_product_url($photo); @endphp
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md transition">
+                            <img src="{{ $image }}" class="w-20 h-16 rounded-lg object-cover shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-sm text-gray-800">{{ $item['product_name'] }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Rp{{ number_format($item['price'], 0, ',', '.') }}</p>
+                            </div>
+                            <span class="px-3 py-1 text-xs rounded-full font-medium shrink-0
+                                @if($item['status'] === 'approved') bg-green-100 text-green-700
+                                @elseif($item['status'] === 'pending') bg-yellow-100 text-yellow-700
+                                @else bg-red-100 text-red-700 @endif">{{ ucfirst($item['status']) }}</span>
+                            <div class="flex gap-2 shrink-0">
+                                @if(strtolower($item['status']) === 'approved')
+                                    <a href="/my-product/{{ $item['id'] }}/edit" class="px-3 py-1.5 text-xs rounded-full bg-blue-600 text-white hover:bg-blue-700 transition font-medium">Edit</a>
+                                @endif
+                                <button onclick="if(confirm('Apakah Anda yakin ingin menghapus produk ini?')) { @this.call('deleteProduct', {{ $item['id'] }}) }" class="px-3 py-1.5 text-xs rounded-full bg-red-600 text-white hover:bg-red-700 transition font-medium">Hapus</button>
+                                <a href="{{ route('mobile.marketplace.show', $item['id']) }}" class="px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">Detail</a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="bg-white rounded-xl p-8 text-center text-sm text-gray-500 border border-gray-100">Kamu belum punya produk.</div>
+                    @endforelse
+                </div>
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>
