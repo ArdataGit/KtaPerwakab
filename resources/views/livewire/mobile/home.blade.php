@@ -3,6 +3,7 @@ use App\Services\AuthApiService;
 use App\Services\NewsArticleApiService;
 use function Livewire\Volt\{state, mount};
 
+state([
     'user' => session('user') ?? [],
     'token' => session('token'),
     'latestArticles' => [],
