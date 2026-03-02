@@ -9,9 +9,14 @@
     </style>
 
     <!-- TAMPILAN MOBILE -->
-    <div class="md:hidden mobile-view-container bg-white min-h-screen shadow-2xl overflow-y-auto mx-auto relative"
+    <div class="md:hidden mobile-view-container bg-white min-h-screen flex flex-col shadow-2xl overflow-y-auto mx-auto relative"
          style="width: min(100vw, 420px);">
-        {{ $slot }}
+        <div class="flex-1 shrink-0">
+            {{ $slot }}
+        </div>
+        <div class="pb-20 shrink-0">
+            <x-footer />
+        </div>
     </div>
 
     <!-- TAMPILAN DESKTOP -->

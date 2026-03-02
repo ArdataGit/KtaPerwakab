@@ -7,16 +7,20 @@
         <x-desktop.topbar :title="$title ?? 'Dashboard'" />
 
         <!-- Main Content (Scrollable) -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 pb-10">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 flex flex-col">
             <!-- Content Wrapper -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
                 {{ $slot }}
+            </div>
+            
+            <div class="shrink-0 w-full mt-auto">
+                <x-footer />
             </div>
         </main>
     </div>
 
     <!-- Floating WhatsApp Button Desktop -->
-    <div class="fixed z-[9999] flex justify-end" style="right: 4rem; top: 39rem;">
+    <div class="fixed z-[9999] flex justify-end" style="right: 4rem; top: 41rem;">
         <a href="https://wa.me/628567895905" target="_blank"
             class="bg-white text-[#25D366] px-5 py-3 rounded-full shadow-xl hover:bg-gray-50 transition-transform hover:scale-105 flex items-center justify-center border border-gray-100 gap-3 relative group cursor-pointer">
             <span class="font-bold text-gray-800 text-sm">Hubungi Kami!</span>

@@ -7,7 +7,6 @@ state([
     'user' => session('user') ?? [],
     'token' => session('token'),
     'latestArticles' => [],
-    'saldo' => 0,
     'search' => '',
 ]);
 
@@ -22,7 +21,6 @@ mount(function () {
         $user = $response->json('data');
         session(['user' => $user]);
         $this->user = $user;
-        $this->saldo = (int) ($user['point'] ?? 0);
     }
 
     // Fetch artikel terbaru (maks 3)
@@ -64,6 +62,7 @@ mount(function () {
     // Hanya cek family jika iuran TIDAK perlu ditampilkan
     $showFamilyPopup = !$showIuranPopup
         && $isAnggota
+        && ($user['role'] ?? 'publik') !== 'publik'
         && count($user['family_members'] ?? []) === 0;
 @endphp
 
@@ -142,17 +141,24 @@ mount(function () {
         />
 
         <!-- MENU -->
-        <x-mobile.home.menu :items="[
-            ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')],
-            ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
-            ['icon' => 'Info', 'label' => 'TENTANG KAMI', 'route' => route('mobile.history')],
-            ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
-            ['icon' => 'karya', 'label' => 'KARYA ', 'route' => route('mobile.karya.index')],
-            ['icon' => 'martketplace', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index')],
-            ['icon' => 'Info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
-            ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
-            ['icon' => 'karya', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
-        ]" />
+        @php
+            $menuItems = [
+                ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
+                ['icon' => 'Info', 'label' => 'TENTANG KAMI', 'route' => route('mobile.history')],
+                ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
+                ['icon' => 'karya', 'label' => 'KARYA ', 'route' => route('mobile.karya.index')],
+                ['icon' => 'martketplace', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index')],
+                ['icon' => 'Info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
+                ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
+                ['icon' => 'karya', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
+            ];
+
+            if (($user['role'] ?? 'publik') !== 'publik') {
+                array_unshift($menuItems, ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')]);
+            }
+        @endphp
+        
+        <x-mobile.home.menu :items="$menuItems" />
 
         <!-- BANNER -->
         <livewire:mobile.home.banner />
@@ -269,10 +275,8 @@ mount(function () {
                                         <div class="font-semibold text-white capitalize">{{ $user['role'] ?? 'Anggota' }}</div>
                                     </div>
                                     <div class="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 border border-white/20">
-                                        <div class="text-xs text-green-200 uppercase font-bold">Total Poin</div>
-                                        <div class="font-semibold text-white capitalize flex items-center justify-center gap-1">
-                                            {{ number_format($saldo) }} <span class="text-yellow-300">🪙</span>
-                                        </div>
+                                        <div class="text-xs text-green-200 uppercase font-bold">Domisili</div>
+                                        <div class="font-semibold text-white capitalize">{{ $user['city'] ?? '-' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -297,7 +301,6 @@ mount(function () {
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @php
                                 $desktopMenus = [
-                                    ['icon' => 'home', 'label' => 'KTA', 'route' => route('mobile.kta'), 'color' => 'blue'],
                                     ['icon' => 'document-text', 'label' => 'Artikel', 'route' => route('mobile.articles'), 'color' => 'green'],
                                     ['icon' => 'color-swatch', 'label' => 'Karya', 'route' => route('mobile.karya.index'), 'color' => 'purple'],
                                     ['icon' => 'shopping-cart', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index'), 'color' => 'orange'],
@@ -307,6 +310,10 @@ mount(function () {
                                     ['icon' => 'briefcase', 'label' => 'Bisnis', 'route' => route('mobile.bisnis.explore'), 'color' => 'indigo'],
                                     ['icon' => 'user-group', 'label' => 'Tentang Kami', 'route' => route('mobile.history'), 'color' => 'blue'],
                                 ];
+
+                                if (($user['role'] ?? 'publik') !== 'publik') {
+                                    array_unshift($desktopMenus, ['icon' => 'home', 'label' => 'KTA', 'route' => route('mobile.kta'), 'color' => 'blue']);
+                                }
                             @endphp
                             
                             @foreach($desktopMenus as $menu)
@@ -356,7 +363,7 @@ mount(function () {
                                 <svg class="w-6 h-6 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                                 <div>
                                     <div class="font-bold">Keanggotaan Expired</div>
-                                    <p class="text-sm mt-1 opacity-90">Masa berlaku berakhir pada {{ \Carbon\Carbon::parse($expiredAtRaw)->format('d M Y') }}</p>
+                                    <p class="text-sm mt-1 opacity-90">Masa berlaku berakhir pada {{ Carbon\Carbon::parse($expiredAtRaw)->format('d M Y') }}</p>
                                     <a href="{{ route('mobile.iuran') }}" class="inline-block mt-3 px-4 py-1.5 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">Perbarui Iuran</a>
                                 </div>
                             </div>

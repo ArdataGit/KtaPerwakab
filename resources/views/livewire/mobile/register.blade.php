@@ -138,7 +138,7 @@ $nextStep = function () {
     $rules = $this->getValidationRulesForStep($this->step);
     try {
         $this->validate($rules);
-        if ($this->step < 4) {
+        if ($this->step < ($this->role === 'publik' ? 3 : 4)) {
             $this->step++;
         }
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -228,7 +228,7 @@ $submit = function () {
             'birth_date' => 'required|date',
             'occupation' => 'required|string',
             'profile_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'kta_id' => $this->has_kta === 'yes' ? 'required|string|min:5|max:50' : 'nullable',
+            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes') ? 'required|string|min:5|max:50' : 'nullable',
         ]);
 
         $payload = [
@@ -245,7 +245,7 @@ $submit = function () {
             'kelurahan' => $this->kelurahan,
             'occupation' => $this->occupation === 'lain_lain' ? $this->occupation_other : $this->occupation,
             'role' => $this->role,
-            'kta_id' => $this->has_kta === 'yes' ? $this->kta_id : null,
+            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes') ? $this->kta_id : null,
         ];
 
         $files = $this->profile_photo instanceof \Illuminate\Http\UploadedFile
@@ -306,7 +306,7 @@ $submit = function () {
 
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="font-bold text-2xl text-gray-800">Daftar Akun</h1>
-                    <span class="text-sm text-gray-600">Langkah {{ $step }} / 4</span>
+                    <span class="text-sm text-gray-600">Langkah {{ $step }} / {{ $role === 'publik' ? 3 : 4 }}</span>
                 </div>
 
                 @if($step === 1)
@@ -561,7 +561,7 @@ $submit = function () {
         </button>
     @endif
 
-    @if($step < 4)
+    @if($step < ($role === 'publik' ? 3 : 4))
         <x-mobile.button
             class="flex-1 h-12"
             wire:click="nextStep">
@@ -626,7 +626,9 @@ $submit = function () {
                         <div class="flex items-center gap-3"><span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-white">1</span> Data Akun & Identitas</div>
                         <div class="flex items-center gap-3"><span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-white">2</span> Alamat Domisili</div>
                         <div class="flex items-center gap-3"><span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-white">3</span> Data Pribadi & Foto</div>
+                        @if($role !== 'publik')
                         <div class="flex items-center gap-3"><span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-white">4</span> Verifikasi KTA</div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -649,7 +651,7 @@ $submit = function () {
 
                     <div class="mb-8">
                         <h2 class="text-3xl font-bold text-gray-900 mb-2">Daftar Akun Baru</h2>
-                        <p class="text-gray-500">Langkah {{ $step }} dari 4 — 
+                        <p class="text-gray-500">Langkah {{ $step }} dari {{ $role === 'publik' ? 3 : 4 }} — 
                             @if($step === 1) Data Akun
                             @elseif($step === 2) Alamat Domisili
                             @elseif($step === 3) Data Pribadi
@@ -660,7 +662,7 @@ $submit = function () {
 
                     {{-- Step Progress --}}
                     <div class="flex items-center gap-2 mb-8">
-                        @for($i = 1; $i <= 4; $i++)
+                        @for($i = 1; $i <= ($role === 'publik' ? 3 : 4); $i++)
                             <div class="flex-1 h-2 rounded-full {{ $i <= $step ? 'bg-green-500' : 'bg-gray-200' }} transition-all duration-300"></div>
                         @endfor
                     </div>
@@ -840,7 +842,7 @@ $submit = function () {
                         @if($step > 1)
                             <button wire:click="prevStep" class="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-semibold transition">Kembali</button>
                         @endif
-                        @if($step < 4)
+                        @if($step < ($role === 'publik' ? 3 : 4))
                             <button wire:click="nextStep" class="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition shadow-lg shadow-green-200">Selanjutnya</button>
                         @else
                             <button wire:click="submit" :disabled="$wire.isSubmitting" class="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition shadow-lg shadow-green-200 disabled:opacity-60 disabled:cursor-not-allowed">
