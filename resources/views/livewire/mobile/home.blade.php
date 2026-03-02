@@ -280,11 +280,15 @@ mount(function () {
                                     </div>
                                 </div>
                             </div>
+                            @if(($user['role'] ?? 'publik') !== 'publik')
                             <div class="mt-6 md:mt-0">
                                 <a href="{{ route('mobile.kta') }}" class="group flex items-center justify-center h-40 w-28 bg-white/10 border-2 border-white/30 backdrop-blur-md rounded-xl hover:bg-white/20 transition cursor-pointer">
-                                    <div class="rotate-90 text-center font-bold tracking-widest text-lg whitespace-nowrap">KTA DIGITAL</div>
+                                    <div class="rotate-90 text-center font-bold tracking-widest text-lg whitespace-nowrap">
+                                        KTA DIGITAL
+                                    </div>
                                 </a>
                             </div>
+                            @endif
                         </div>
                         
                         <!-- Dekorasi Pattern Background -->
