@@ -351,6 +351,8 @@ mount(function () {
                 <div class="space-y-6">
                     
                     <!-- Box Membership Status -->
+                     
+                    @if(($user['role'] ?? 'publik') !== 'publik')
                     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-3">Status Iuran</h3>
                         @if($isFirstIuran)
@@ -381,6 +383,7 @@ mount(function () {
                             </div>
                         @endif
                     </div>
+                    @endif
 
     
                     <!-- Artikel Desktop -->
