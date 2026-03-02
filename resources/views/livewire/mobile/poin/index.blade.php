@@ -214,4 +214,73 @@ mount(fn() => $this->load());
     <div class="h-24"></div>
     <x-mobile.navbar active="poin" />
 
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Poin">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                    <a href="{{ route('mobile.profile') }}" class="hover:text-green-600 transition">&larr; Kembali ke Profil</a>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Poin Saya</h1>
+                <p class="text-gray-500 mb-8">Kelola dan tukarkan poin reward Anda.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {{-- LEFT: Saldo --}}
+                    <div>
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg sticky top-6">
+                            <p class="text-sm opacity-80">Hallo, {{ $user['name'] ?? '-' }}</p>
+                            <div class="flex items-center justify-between mt-3">
+                                <div>
+                                    <p class="text-xs opacity-70">Total Poin</p>
+                                    <p class="text-3xl font-bold">{{ number_format($saldo) }} <span class="text-base font-medium">Poin</span></p>
+                                </div>
+                                <div class="text-yellow-300 text-4xl">🪙</div>
+                            </div>
+                            <a href="{{ route('mobile.poin.tukar') }}" class="block mt-4 bg-white/20 hover:bg-white/30 text-white text-center py-2.5 rounded-full font-semibold text-sm transition">Tukar Poin</a>
+                        </div>
+                    </div>
+
+                    {{-- RIGHT: History --}}
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="flex border-b text-sm">
+                                <button wire:click="$set('tab','tambah')" class="flex-1 py-4 text-center font-medium transition {{ $tab === 'tambah' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-500 hover:text-gray-700' }}">Riwayat Poin</button>
+                                <button wire:click="$set('tab','tukar')" class="flex-1 py-4 text-center font-medium transition {{ $tab === 'tukar' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-500 hover:text-gray-700' }}">Riwayat Penukaran</button>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                @if ($tab === 'tambah')
+                                    @forelse ($historyTambah as $item)
+                                        <div class="flex justify-between items-start text-sm border-b border-gray-50 pb-3">
+                                            <div>
+                                                <p class="font-semibold text-gray-800">{{ $item['kategori_name'] ?? 'Penambahan Poin' }}</p>
+                                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($item['created_at'])->format('d M Y • H:i') }}</p>
+                                                @if(isset($item['added_by']))<p class="text-xs text-gray-400 mt-0.5">oleh {{ $item['added_by'] }}</p>@endif
+                                            </div>
+                                            <p class="font-semibold text-green-600">+{{ $item['point'] ?? 0 }}</p>
+                                        </div>
+                                    @empty
+                                        <p class="text-center text-sm text-gray-500 py-8">Belum ada riwayat poin</p>
+                                    @endforelse
+                                @endif
+                                @if ($tab === 'tukar')
+                                    @forelse ($historyTukar as $item)
+                                        <div class="flex justify-between items-start text-sm border-b border-gray-50 pb-3">
+                                            <div>
+                                                <p class="font-semibold text-gray-800">{{ $item['keterangan'] ?? 'Penukaran Poin' }}</p>
+                                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d M • H:i') }}</p>
+                                            </div>
+                                            <p class="font-semibold text-red-600">{{ $item['point'] }}</p>
+                                        </div>
+                                    @empty
+                                        <p class="text-center text-sm text-gray-500 py-8">Belum ada penukaran poin</p>
+                                    @endforelse
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>

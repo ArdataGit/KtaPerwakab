@@ -74,27 +74,32 @@ mount(function () {
     <script>
     document.addEventListener("livewire:init", () => {
         setTimeout(() => {
-            const swiperEl = document.querySelector(".myHomeSwiper");
-            if (!swiperEl) return;
+            const swiperEls = document.querySelectorAll(".myHomeSwiper");
+            
+            swiperEls.forEach((swiperEl) => {
+                const swiper = new Swiper(swiperEl, {
+                    loop: true,
+                    autoplay: {
+                        delay: 3500,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: swiperEl.querySelector(".swiper-pagination"),
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: swiperEl.querySelector(".home-swiper-next"),
+                        prevEl: swiperEl.querySelector(".home-swiper-prev"),
+                    },
+                });
 
-            const swiper = new Swiper(swiperEl, {
-                loop: true,
-                autoplay: {
-                    delay: 3500,
-                    disableOnInteraction: false,
-                },
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true,
-                },
+                // Manual navigation fallback
+                const prevBtn = swiperEl.querySelector(".home-swiper-prev");
+                const nextBtn = swiperEl.querySelector(".home-swiper-next");
+
+                if (prevBtn) prevBtn.addEventListener("click", () => swiper.slidePrev());
+                if (nextBtn) nextBtn.addEventListener("click", () => swiper.slideNext());
             });
-
-            // Manual navigation (lebih stabil di Livewire)
-            document.querySelector(".home-swiper-prev")
-                ?.addEventListener("click", () => swiper.slidePrev());
-
-            document.querySelector(".home-swiper-next")
-                ?.addEventListener("click", () => swiper.slideNext());
 
         }, 300);
     });

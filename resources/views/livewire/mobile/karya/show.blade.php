@@ -154,4 +154,66 @@ mount(function ($id) {
 
     @endif
 
+    {{-- ==================== DESKTOP VIEW ==================== --}}
+    <x-slot:desktop>
+        <x-desktop.layout title="Detail Karya">
+            <div class="max-w-4xl mx-auto">
+                @if (!$publikasi)
+                    <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+                        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mb-4"></div>
+                        <p class="text-sm">Memuat detail publikasi...</p>
+                    </div>
+                @else
+                    @php
+                        $photoUrls = collect($publikasi['photos'] ?? [])
+                            ->map(fn($p) => api_product_url($p['file_path']))
+                            ->filter()
+                            ->values();
+                    @endphp
+
+                    <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                        <a href="{{ route('mobile.karya.index') }}" class="hover:text-green-600 transition">&larr; Kembali ke Karya</a>
+                    </div>
+
+                    {{-- IMAGE GALLERY --}}
+                    @if($photoUrls->count())
+                        <div class="grid grid-cols-{{ min($photoUrls->count(), 3) }} gap-3 mb-8">
+                            @foreach($photoUrls->take(6) as $url)
+                                <div class="rounded-2xl overflow-hidden shadow-lg">
+                                    <img src="{{ $url }}" class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- CONTENT --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $publikasi['title'] }}</h1>
+                        <p class="text-sm text-gray-500 mb-6">Oleh <strong>{{ $publikasi['creator'] }}</strong></p>
+
+                        <hr class="mb-6">
+
+                        <h3 class="font-semibold text-gray-800 mb-2">Deskripsi Karya</h3>
+                        <div class="prose max-w-none text-gray-600 leading-relaxed">
+                            {!! nl2br(e($publikasi['description'] ?: 'Tidak ada deskripsi.')) !!}
+                        </div>
+
+                        @if (!empty($publikasi['videos']))
+                            <div class="mt-8 space-y-3">
+                                <h3 class="font-semibold text-gray-800">Video Terkait</h3>
+                                @foreach ($publikasi['videos'] as $video)
+                                    <a href="{{ $video['link'] }}" target="_blank"
+                                        class="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        Lihat Video
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </x-desktop.layout>
+    </x-slot:desktop>
+
 </x-layouts.mobile>
