@@ -140,7 +140,7 @@ Route::middleware('mobile.auth')->group(function () {
     // STRUKTUR ORGANISASI
     Volt::route('/struktur-organisasi', 'mobile.struktur-organisasi')->name('mobile.struktur-organisasi');
 
-    // SEJARAH ORGANISASI
+    // TENTANG KAMI / SEJARAH
     Volt::route('/sejarah-organisasi', 'mobile.history')->name('mobile.history');
 
     // ARTICLE

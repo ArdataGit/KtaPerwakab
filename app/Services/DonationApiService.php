@@ -33,8 +33,8 @@ class DonationApiService
             config('services.kta_api.base_url') . "/donations/{$donationId}/status"
         );
     }
-  
-      /**
+
+    /**
      * Get donation detail (for checkout page)
      */
     public static function detail(int $donationId)
@@ -42,14 +42,24 @@ class DonationApiService
         return Http::withToken(session('token'))
             ->acceptJson()
             ->get(
-                config('services.kta_api.base_url') . "/donations/{$donationId}"
-            );
+            config('services.kta_api.base_url') . "/donations/{$donationId}"
+        );
     }
-  
+
     public static function myDonations()
     {
         return Http::withToken(session('token'))
             ->acceptJson()
             ->get(config('services.kta_api.base_url') . '/donations/my');
+    }
+
+    /**
+     * CHECK DAILY LIMIT
+     */
+    public static function checkLimit()
+    {
+        return self::client()->get(
+            config('services.kta_api.base_url') . '/donations/check-limit'
+        );
     }
 }

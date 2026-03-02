@@ -235,6 +235,20 @@ state([
                                 <svg class="w-5 h-5 text-gray-300 group-hover:text-green-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
                             </a>
 
+                            <a href="{{ route('mobile.family') }}"
+                                class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition group border-t border-gray-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5V10l-10-8L2 10v10h5m10 0v-4C17 14.895 15.657 14 14 14H10C8.343 14 7 14.895 7 16v4m10 0H7"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-800 group-hover:text-green-700 transition">Data Keluarga</p>
+                                        <p class="text-xs text-gray-400">Kelola info anggota keluarga / tertanggung</p>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-green-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                            </a>
+
                             <a href="/my-donation"
                                 class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition group border-t border-gray-50">
                                 <div class="flex items-center gap-4">

@@ -3,10 +3,10 @@ use App\Services\AuthApiService;
 use App\Services\NewsArticleApiService;
 use function Livewire\Volt\{state, mount};
 
-state([
     'user' => session('user') ?? [],
     'token' => session('token'),
     'latestArticles' => [],
+    'saldo' => 0,
     'search' => '',
 ]);
 
@@ -21,6 +21,7 @@ mount(function () {
         $user = $response->json('data');
         session(['user' => $user]);
         $this->user = $user;
+        $this->saldo = (int) ($user['point'] ?? 0);
     }
 
     // Fetch artikel terbaru (maks 3)
@@ -143,7 +144,7 @@ mount(function () {
         <x-mobile.home.menu :items="[
             ['icon' => 'kta', 'label' => 'KTA DIGITAL', 'route' => route('mobile.kta')],
             ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
-            ['icon' => 'Info', 'label' => 'SEJARAH', 'route' => route('mobile.history')],
+            ['icon' => 'Info', 'label' => 'TENTANG KAMI', 'route' => route('mobile.history')],
             ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
             ['icon' => 'karya', 'label' => 'KARYA ', 'route' => route('mobile.karya.index')],
             ['icon' => 'martketplace', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index')],
@@ -242,7 +243,7 @@ mount(function () {
                         <p class="text-gray-600 mb-8 max-w-sm mx-auto leading-relaxed">
                             Untuk kelengkapan data keanggotaan dan manfaat perlindungan, silakan isi data anggota keluarga Anda sekarang.
                         </p>
-                        <a href="{{ route('mobile.profile.edit') }}"
+                        <a href="/profile/family"
                            class="block w-full bg-blue-600 text-white py-3.5 hover:bg-blue-700 rounded-xl font-bold shadow-lg shadow-blue-200 transition">
                             Isi Data Keluarga Sekarang
                         </a>
@@ -267,8 +268,10 @@ mount(function () {
                                         <div class="font-semibold text-white capitalize">{{ $user['role'] ?? 'Anggota' }}</div>
                                     </div>
                                     <div class="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 border border-white/20">
-                                        <div class="text-xs text-green-200 uppercase font-bold">Domisili</div>
-                                        <div class="font-semibold text-white capitalize">{{ $user['city'] ?? '-' }}</div>
+                                        <div class="text-xs text-green-200 uppercase font-bold">Total Poin</div>
+                                        <div class="font-semibold text-white capitalize flex items-center justify-center gap-1">
+                                            {{ number_format($saldo) }} <span class="text-yellow-300">🪙</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -301,6 +304,7 @@ mount(function () {
                                     ['icon' => 'user-group', 'label' => 'Pengurus', 'route' => route('mobile.struktur-organisasi'), 'color' => 'teal'],
                                     ['icon' => 'heart', 'label' => 'Donasi', 'route' => route('mobile.donation.index'), 'color' => 'red'],
                                     ['icon' => 'briefcase', 'label' => 'Bisnis', 'route' => route('mobile.bisnis.explore'), 'color' => 'indigo'],
+                                    ['icon' => 'user-group', 'label' => 'Tentang Kami', 'route' => route('mobile.history'), 'color' => 'blue'],
                                 ];
                             @endphp
                             
@@ -351,7 +355,7 @@ mount(function () {
                                 <svg class="w-6 h-6 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                                 <div>
                                     <div class="font-bold">Keanggotaan Expired</div>
-                                    <p class="text-sm mt-1 opacity-90">Masa berlaku berakhir pada {{ Carbon\Carbon::parse($expiredAtRaw)->format('d M Y') }}</p>
+                                    <p class="text-sm mt-1 opacity-90">Masa berlaku berakhir pada {{ \Carbon\Carbon::parse($expiredAtRaw)->format('d M Y') }}</p>
                                     <a href="{{ route('mobile.iuran') }}" class="inline-block mt-3 px-4 py-1.5 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">Perbarui Iuran</a>
                                 </div>
                             </div>

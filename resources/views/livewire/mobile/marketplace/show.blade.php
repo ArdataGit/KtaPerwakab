@@ -81,11 +81,11 @@ mount(function ($id) {
                     </p>
 
                     {{-- RATING --}}
-                    <div class="flex items-center text-xs space-x-2">
+                    <!-- <div class="flex items-center text-xs space-x-2">
                         <span class="text-yellow-500">★★★★★</span>
                         <span class="text-gray-600">5.0</span>
                         <span class="text-gray-400">(122 Reviews)</span>
-                    </div>
+                    </div> -->
 
                     {{-- UMKM --}}
                     <p class="text-xs text-gray-500">
@@ -186,11 +186,11 @@ mount(function ($id) {
 
                             <p class="text-green-600 font-bold text-2xl">Rp {{ number_format((float) $product['price'], 0, ',', '.') }}</p>
 
-                            <div class="flex items-center text-sm space-x-2">
+                            <!-- <div class="flex items-center text-sm space-x-2">
                                 <span class="text-yellow-500">★★★★★</span>
                                 <span class="text-gray-600">5.0</span>
                                 <span class="text-gray-400">(122 Reviews)</span>
-                            </div>
+                            </div> -->
 
                             <p class="text-sm text-gray-500">Oleh <strong>{{ data_get($product, 'umkm.user.name', '-') }}</strong></p>
 

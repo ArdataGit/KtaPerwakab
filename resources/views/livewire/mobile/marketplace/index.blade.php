@@ -165,7 +165,7 @@ updated([
 
     {{-- ==================== DESKTOP VIEW ==================== --}}
     <x-slot:desktop>
-        <x-desktop.layout title="M-UMKM">
+        <x-desktop.layout title="UMKM">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-8">
                     <div>

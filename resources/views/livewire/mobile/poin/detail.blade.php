@@ -182,8 +182,14 @@ mount(fn($id) => $this->load($id));
                         </div>
                     </div>
                     @if ($saldo >= $produk['jumlah_poin'])
-                        <a href="https://wa.me/6281222222222?text=Halo Admin 👋%0A%0ASaya ingin menukar poin:%0A%0ANama User : {{ session('user')['name'] ?? '-' }}%0AID User   : {{ session('user')['id'] ?? '-' }}%0A%0AProduk    : {{ $produk['produk'] }}%0APoin      : {{ $produk['jumlah_poin'] }} poin%0A%0AMohon diproses. Terima kasih 🙏" target="_blank"
-                            class="block w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-center transition shadow-md shadow-green-200">Tukar Poin Sekarang</a>
+                        <button wire:click="redeem" wire:loading.attr="disabled"
+                            class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold transition shadow-md shadow-green-200 disabled:opacity-50">
+                            <span wire:loading.remove wire:target="redeem">Tukar Poin Sekarang</span>
+                            <span wire:loading wire:target="redeem" class="flex items-center justify-center gap-2">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Memproses...
+                            </span>
+                        </button>
                     @else
                         <button disabled class="block w-full bg-gray-300 text-gray-600 py-4 rounded-xl font-semibold cursor-not-allowed">Poin Tidak Mencukupi</button>
                     @endif

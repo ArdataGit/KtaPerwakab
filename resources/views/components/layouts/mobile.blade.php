@@ -1,13 +1,13 @@
-<style>
-    @media (max-width: 767px) {
-        .desktop-view-container { display: none !important; }
-    }
-    @media (min-width: 768px) {
-        .mobile-view-container { display: none !important; }
-    }
-</style>
-
 <div class="bg-gray-100 min-h-screen w-full font-sans">
+    <style>
+        @media (max-width: 767px) {
+            .desktop-view-container { display: none !important; }
+        }
+        @media (min-width: 768px) {
+            .mobile-view-container { display: none !important; }
+        }
+    </style>
+
     <!-- TAMPILAN MOBILE -->
     <div class="md:hidden mobile-view-container bg-white min-h-screen shadow-2xl overflow-y-auto mx-auto relative"
          style="width: min(100vw, 420px);">
@@ -16,8 +16,8 @@
 
     <!-- TAMPILAN DESKTOP -->
     <div class="hidden md:block desktop-view-container w-full min-h-screen bg-gray-50">
-        @if(isset($desktop) || (isset($slots) && $slots->has('desktop')))
-            {{ $desktop ?? $slots->desktop }}
+        @if(isset($desktop))
+            {{ $desktop }}
         @else
             <div class="min-h-screen flex items-center justify-center">
                 <div class="text-center bg-white p-10 rounded-2xl shadow-sm border border-gray-100">

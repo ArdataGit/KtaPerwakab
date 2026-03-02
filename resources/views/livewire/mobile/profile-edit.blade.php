@@ -333,51 +333,7 @@ $submit = function () {
                                 </div>
                             </div>
 
-                            {{-- Data Keluarga --}}
-                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                                <h3 class="text-lg font-bold text-gray-900 mb-6">Data Keluarga Pengikut / Tertanggung</h3>
-                                <div class="space-y-5">
-                                    @foreach($family_members as $index => $member)
-                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 space-y-4">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-sm font-semibold text-gray-700">Anggota #{{ $index + 1 }}</span>
-                                                @if(count($family_members) > 1)
-                                                    <button type="button" wire:click="removeFamilyMember({{ $index }})"
-                                                        class="text-red-500 hover:text-red-700 text-xs font-semibold transition">Hapus</button>
-                                                @endif
-                                            </div>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <select wire:model.defer="family_members.{{ $index }}.relationship"
-                                                    class="w-full rounded-xl px-4 py-3 text-sm bg-white border border-gray-200 focus:border-green-500 outline-none transition">
-                                                    <option value="">Pilih Hubungan</option>
-                                                    <option value="Ayah">Ayah</option>
-                                                    <option value="Ibu">Ibu</option>
-                                                    <option value="Suami">Suami</option>
-                                                    <option value="Istri">Istri</option>
-                                                    <option value="Anak">Anak</option>
-                                                    <option value="Ayah Mertua">Ayah Mertua</option>
-                                                    <option value="Ibu Mertua">Ibu Mertua</option>
-                                                </select>
-                                                <input type="number" wire:model.defer="family_members.{{ $index }}.age" placeholder="Umur"
-                                                    class="w-full rounded-xl px-4 py-3 text-sm bg-white border border-gray-200 focus:border-green-500 outline-none transition">
-                                                <input type="text" wire:model.defer="family_members.{{ $index }}.name_ktp" placeholder="Nama sesuai KTP"
-                                                    class="w-full rounded-xl px-4 py-3 text-sm bg-white border border-gray-200 focus:border-green-500 outline-none transition">
-                                                <input type="text" wire:model.defer="family_members.{{ $index }}.nickname" placeholder="Nama Panggilan"
-                                                    class="w-full rounded-xl px-4 py-3 text-sm bg-white border border-gray-200 focus:border-green-500 outline-none transition">
-                                                <div class="md:col-span-2">
-                                                    <textarea wire:model.defer="family_members.{{ $index }}.address" placeholder="Alamat" rows="2"
-                                                        class="w-full rounded-xl px-4 py-3 text-sm bg-white border border-gray-200 focus:border-green-500 outline-none resize-none transition"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
-                                    <button type="button" wire:click="addFamilyMember"
-                                        class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-semibold transition">
-                                        + Tambah Anggota Keluarga
-                                    </button>
-                                </div>
-                            </div>
+                            {{-- Data Keluarga dipindahkan ke family.blade.php --}}
 
                             {{-- Submit --}}
                             <button type="submit"

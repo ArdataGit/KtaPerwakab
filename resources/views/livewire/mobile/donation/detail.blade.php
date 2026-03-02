@@ -19,6 +19,10 @@ state([
   
   
     'userId' => null,
+    
+    // Limit donation
+    'canDonate' => true,
+    'limitMessage' => '',
 ]);
 $formatAmount = function ($value) {
     return number_format((int) $value, 0, ',', '.');
@@ -45,6 +49,18 @@ mount(function ($id) {
      if ($paymentRes->successful()) {
          $this->paymentMethods = $paymentRes->json('data') ?? [];
      }
+
+    // CHECK LIMIT
+    if ($this->userId) {
+        $limitRes = DonationApiService::checkLimit();
+        if ($limitRes->successful()) {
+            $limitData = $limitRes->json('data');
+            $this->canDonate = $limitData['can_donate'] ?? true;
+            if (!$this->canDonate) {
+                $this->limitMessage = 'Anda telah mencapai batas maksimal 2 kali donasi untuk hari ini.';
+            }
+        }
+    }
 });
 /**
  * TOGGLE FORM
@@ -150,9 +166,18 @@ $submit = function () {
                         </div>
                     @endif
                     {{-- TOMBOL DONASI --}}
-                    <button wire:click="toggleForm" class="w-full bg-green-600 text-white font-semibold py-4 rounded-2xl text-base">
-                        Donasi Sekarang
-                    </button>
+                    @if(!$canDonate)
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-center">
+                            <p class="text-sm font-semibold text-red-700">{{ $limitMessage }}</p>
+                        </div>
+                        <button disabled class="w-full bg-gray-400 text-white font-semibold py-4 rounded-2xl text-base cursor-not-allowed opacity-70">
+                            Donasi Sekarang
+                        </button>
+                    @else
+                        <button wire:click="toggleForm" class="w-full bg-green-600 text-white font-semibold py-4 rounded-2xl text-base shadow hover:bg-green-700 transition">
+                            Donasi Sekarang
+                        </button>
+                    @endif
                 </div>
             @else
                 {{-- FORM DONASI --}}
@@ -298,10 +323,19 @@ $submit = function () {
                                     <div class="text-center">
                                         <h3 class="font-bold text-lg text-gray-900 mb-2">Berikan Donasi Anda</h3>
                                         <p class="text-sm text-gray-500 mb-6">Setiap donasi sangat berarti bagi mereka yang membutuhkan.</p>
-                                        <button wire:click="toggleForm"
-                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl text-base transition shadow-md shadow-green-200">
-                                            Donasi Sekarang
-                                        </button>
+                                        @if(!$canDonate)
+                                            <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-center mb-4">
+                                                <p class="text-sm font-semibold text-red-700">{{ $limitMessage }}</p>
+                                            </div>
+                                            <button disabled class="w-full bg-gray-400 text-white font-semibold py-4 rounded-xl text-base cursor-not-allowed opacity-70">
+                                                Donasi Sekarang
+                                            </button>
+                                        @else
+                                            <button wire:click="toggleForm"
+                                                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl text-base transition shadow-md shadow-green-200">
+                                                Donasi Sekarang
+                                            </button>
+                                        @endif
                                     </div>
                                 @else
                                     <div class="space-y-5">

@@ -43,6 +43,8 @@ $submit = function () {
 
 <x-layouts.mobile title="Masuk">
 
+<div>{{-- ROOT TUNGGAL: Livewire hanya mendukung 1 root element --}}
+
     <!-- SNACKBAR: entangle ke state Livewire 'snackbar' -->
     <div x-data="{
         snackbar: @entangle('snackbar'),
@@ -162,6 +164,8 @@ $submit = function () {
         </div>
 
     </div>
+
+</div>{{-- END ROOT TUNGGAL --}}
 
     <!-- ================== DESKTOP VIEW ================== -->
     <x-slot:desktop>

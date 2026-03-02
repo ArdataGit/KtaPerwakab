@@ -208,7 +208,7 @@
                             <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
                                 {{-- ============= FRONT SIDE ============= --}}
                                 <div class="face face-front bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5">
-                                    <img src="/images/assets/kta/kta_depan.png" class="w-full object-contain">
+                                    <img src="{{ $frontImage }}" class="w-full object-contain">
                                     {{-- FOTO USER --}}
                                     <img src="{{ $photo }}"
                                         class="absolute top-[105px] left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
@@ -231,7 +231,7 @@
                                 {{-- ============= BACK SIDE ============= --}}
                                 <div class="face face-back bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5">
                                     {{-- TEMPLATE BACKGROUND --}}
-                                    <img src="/images/assets/kta/kta_belakang.png" class="w-full object-contain">
+                                    <img src="{{ $backImage }}" class="w-full object-contain">
                                     {{-- HEADER VISI --}}
                                     <div class="absolute top-[100px] left-0 w-full text-center">
                                         <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">
@@ -264,7 +264,7 @@
                         </div>
                         
                         {{-- ACTION BUTTONS DESKTOP --}}
-                        <div class="flex justify-center space-x-4 mt-8">
+                        <div class="flex justify-center space-x-4 mt-10">
                             <button class="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-lg transition duration-200">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 <span class="font-semibold text-sm">Unduh KTA</span>
