@@ -1,13 +1,21 @@
 <?php
 use App\Services\AuthApiService;
 use App\Services\NewsArticleApiService;
-use function Livewire\Volt\{state, mount};
+use Carbon\Carbon;
+use function Livewire\Volt\{state, mount, computed};
 
 state([
     'user' => session('user') ?? [],
     'token' => session('token'),
     'latestArticles' => [],
     'search' => '',
+    'showIuranPopup' => false,
+    'showFamilyPopup' => false,
+    'closableIuranPopup' => false,
+    'isFirstIuran' => false,
+    'isExpired' => false,
+    'isH7BeforeExpired' => false,
+    'expiredAtRaw' => null,
 ]);
 
 mount(function () {
@@ -23,22 +31,9 @@ mount(function () {
         $this->user = $user;
     }
 
-    // Fetch artikel terbaru (maks 3)
-    $articleResponse = NewsArticleApiService::list([
-        'search' => $this->search ?: null,
-    ]);
-    if ($articleResponse->successful()) {
-        $articles = $articleResponse->json('data.featured') ?? [];
-        $this->latestArticles = collect($articles)->take(3)->all();
-    }
-});
-?>
-
-@php
-    use Carbon\Carbon;
-    
-    $role = $user['role'] ?? null;
-    $expiredAtRaw = $user['expired_at'] ?? null;
+    // Kalkulasi popup iuran
+    $role = $this->user['role'] ?? null;
+    $expiredAtRaw = $this->user['expired_at'] ?? null;
     $isAnggota = $role === 'anggota';
     $today = Carbon::now('Asia/Jakarta')->startOfDay();
     $expiredAt = $expiredAtRaw
@@ -59,11 +54,36 @@ mount(function () {
     $showIuranPopup = $isFirstIuran || $isExpired || $isH7BeforeExpired;
     $closableIuranPopup = !$isFirstIuran;
 
-    // Hanya cek family jika iuran TIDAK perlu ditampilkan
     $showFamilyPopup = !$showIuranPopup
         && $isAnggota
-        && ($user['role'] ?? 'publik') !== 'publik'
-        && count($user['family_members'] ?? []) === 0;
+        && ($this->user['role'] ?? 'publik') !== 'publik'
+        && count($this->user['family_members'] ?? []) === 0;
+
+    $this->expiredAtRaw = $expiredAtRaw;
+    $this->isFirstIuran = $isFirstIuran;
+    $this->isExpired = $isExpired;
+    $this->isH7BeforeExpired = $isH7BeforeExpired;
+    $this->showIuranPopup = $showIuranPopup;
+    $this->closableIuranPopup = $closableIuranPopup;
+    $this->showFamilyPopup = $showFamilyPopup;
+
+    // Fetch artikel terbaru (maks 3)
+    $articleResponse = NewsArticleApiService::list([
+        'search' => $this->search ?: null,
+    ]);
+    if ($articleResponse->successful()) {
+        $articles = $articleResponse->json('data.featured') ?? [];
+        $this->latestArticles = collect($articles)->take(3)->all();
+    }
+});
+?>
+
+@php
+    use Carbon\Carbon;
+    // Variabel sudah dihitung di mount(), hanya persiapkan variabel lokal untuk template
+    $expiredAt = $expiredAtRaw
+        ? Carbon::parse($expiredAtRaw)->timezone('Asia/Jakarta')->startOfDay()
+        : null;
 @endphp
 
 <x-layouts.mobile title="Beranda">

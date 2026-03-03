@@ -34,7 +34,7 @@
             :type="{{ $isPassword ? 'show ? \'text\' : \'password\'' : '\'' . $type . '\'' }}"
             {{ $attributes->merge([
                 'class' =>
-                    'w-full px-4 py-3 my-3 rounded-xl border text-sm transition focus:outline-none pr-12 ' .
+                    'w-full px-4 py-3 my-3 rounded-xl border text-base transition focus:outline-none pr-12 ' .
                     ($invalid
                         ? 'border-red-500 bg-red-50'
                         : 'border-gray-300 bg-white focus:border-green-500')
