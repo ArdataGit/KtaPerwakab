@@ -45,13 +45,13 @@ state([
 ]);
 
 mount(function () {
-    $resProv = Http::get('https://adminperwakb.ktadigital.id/api/regions/provinces');
+    $resProv = Http::get('https://admin.perwakabbatam.com/api/regions/provinces');
     if ($resProv->successful()) {
         $this->provinces = $resProv->json()['data'] ?? [];
     }
     $this->province_code = 21;
     $this->loadingCities = true;
-    $resCity = Http::get('https://adminperwakb.ktadigital.id/api/regions/cities', ['province_id' => 21]);
+    $resCity = Http::get('https://admin.perwakabbatam.com/api/regions/cities', ['province_id' => 21]);
     if ($resCity->successful()) {
         $this->cities = $resCity->json()['data'] ?? [];
         $this->city_code = 2171;
@@ -60,7 +60,7 @@ mount(function () {
     }
     $this->loadingCities = false;
     $this->loadingDistricts = true;
-    $resDistrict = Http::get('https://adminperwakb.ktadigital.id/api/regions/districts', ['city_id' => 2171]);
+    $resDistrict = Http::get('https://admin.perwakabbatam.com/api/regions/districts', ['city_id' => 2171]);
     if ($resDistrict->successful()) {
         $this->districts = $resDistrict->json()['data'] ?? [];
     }
@@ -85,7 +85,7 @@ updated([
         if (!$this->province_code) return;
         $this->loadingCities = true;
         $res = Http::timeout(60)->retry(2, 1000)
-            ->get('https://adminperwakb.ktadigital.id/api/regions/cities', ['province_id' => $this->province_code]);
+            ->get('https://admin.perwakabbatam.com/api/regions/cities', ['province_id' => $this->province_code]);
         if ($res->successful()) {
             $this->cities = $res->json()['data'] ?? [];
             if ($this->province_code == 21 && !$this->city_code) {
@@ -102,7 +102,7 @@ updated([
         $this->city = $selected['name'] ?? '';
         $this->loadingDistricts = true;
         $res = Http::timeout(60)->retry(2, 1000)
-            ->get('https://adminperwakb.ktadigital.id/api/regions/districts', ['city_id' => $this->city_code]);
+            ->get('https://admin.perwakabbatam.com/api/regions/districts', ['city_id' => $this->city_code]);
         if ($res->successful()) {
             $this->districts = $res->json()['data'] ?? [];
         } else {
@@ -118,7 +118,7 @@ updated([
         $this->kecamatan = $selected['name'] ?? '';
         $this->loadingVillages = true;
         $res = Http::timeout(60)->retry(2, 1000)
-            ->get('https://adminperwakb.ktadigital.id/api/regions/villages', ['district_id' => $this->district_code]);
+            ->get('https://admin.perwakabbatam.com/api/regions/villages', ['district_id' => $this->district_code]);
         if ($res->successful()) {
             $this->villages = $res->json()['data'] ?? [];
         } else {
