@@ -79,7 +79,6 @@ mount(function () {
 ?>
 
 @php
-    use Carbon\Carbon;
     // Variabel sudah dihitung di mount(), hanya persiapkan variabel lokal untuk template
     $expiredAt = $expiredAtRaw
         ? Carbon::parse($expiredAtRaw)->timezone('Asia/Jakarta')->startOfDay()
