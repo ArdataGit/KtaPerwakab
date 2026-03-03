@@ -5,7 +5,7 @@
     $role = $user['role'] ?? 'publik';
 @endphp
 
-<div class="px-6 mt-6" x-data="{
+<div class="px-4 mt-6" x-data="{
         showSnackbar: false,
         message: ''
     }">
@@ -18,7 +18,7 @@
 
     <p class="text-base font-bold text-gray-800 mb-4">Menu</p>
 
-    <div class="grid grid-cols-4 card gap-4">
+    <div class="grid grid-cols-4 gap-2">
 
         @foreach ($items as $item)
 
@@ -38,7 +38,7 @@
             " @endif>
 
                 {{-- ICON --}}
-                <div class="bg-green-50 w-16 h-16 rounded-xl flex items-center justify-center shadow-sm">
+                <div class="bg-green-50 w-14 h-14 rounded-xl flex items-center justify-center shadow-sm">
                     <img src="/images/assets/icon/{{ $icon }}.svg" class="w-7 h-7" alt="{{ $label }} icon">
                 </div>
 
