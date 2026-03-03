@@ -111,6 +111,14 @@ $submit = function () {
 
                 <h1 class="text-center font-bold text-xl mb-4">Masuk</h1>
 
+                {{-- Session expired notice --}}
+                @if(session('info'))
+                <div class="mb-4 bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    {{ session('info') }}
+                </div>
+                @endif
+
                 {{-- EMAIL --}}
                 <x-mobile.input wire:model.defer="email" placeholder="Username Atau Nomor Telepon" 
     type="text"
@@ -209,6 +217,14 @@ $submit = function () {
                         <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang 👋</h2>
                         <p class="text-gray-500">Silakan masukkan detail akun Anda untuk melanjutkan.</p>
                     </div>
+
+                    <!-- Session expired notice -->
+                    @if(session('info'))
+                    <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg flex items-center shadow-sm">
+                        <svg class="h-5 w-5 text-yellow-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <p class="text-sm font-medium text-yellow-800">{{ session('info') }}</p>
+                    </div>
+                    @endif
 
                     <!-- Alert / Error Snackbar -->
                     @if($snackbar['message'] && $snackbar['type'] === 'error')

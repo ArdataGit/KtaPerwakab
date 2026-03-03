@@ -16,7 +16,7 @@
                     <span class="text-sm font-bold text-yellow-700">{{ session('user.point') ?? 0 }} Pts</span>
                 </a>
                 
-                <div class="flex items-center pl-4 border-l border-gray-200">
+                <a href="{{ route('mobile.profile') }}" class="flex items-center pl-4 border-l border-gray-200 hover:opacity-80 transition">
                     <img class="h-9 w-9 rounded-full object-cover border-2 border-green-500 shadow-sm" 
                          src="{{ api_profile_url(session('user.profile_photo') ?? null) }}" 
                          onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(session('user.name') ?? 'User') }}&background=random'"
@@ -24,7 +24,7 @@
                     <span class="ml-3 text-sm font-medium text-gray-700 hidden lg:block">
                         {{ session('user.name') ?? 'Pengguna' }}
                     </span>
-                </div>
+                </a>
             </div>
             @endif
         </div>

@@ -20,16 +20,27 @@ state([
 
 mount(function () {
     if (!$this->token) {
+        $this->redirect(route('mobile.login'));
         return;
     }
 
     // Refresh user data terbaru
     $response = AuthApiService::me($this->token);
-    if ($response->successful()) {
-        $user = $response->json('data');
-        session(['user' => $user]);
-        $this->user = $user;
+
+    // Jika token expired / invalid → bersihkan session dan redirect ke login
+    if (!$response->successful() || $response->status() === 401) {
+        $cacheKey = 'token_valid_' . md5($this->token);
+        cache()->forget($cacheKey);
+        session()->forget(['user', 'token', 'membership_fee_id', 'membership_fee_amount']);
+        session()->invalidate();
+        session()->regenerateToken();
+        $this->redirect(route('mobile.login'));
+        return;
     }
+
+    $user = $response->json('data');
+    session(['user' => $user]);
+    $this->user = $user;
 
     // Kalkulasi popup iuran
     $role = $this->user['role'] ?? null;

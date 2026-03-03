@@ -38,7 +38,7 @@ mount(function () {
                 <a href="/banner/{{$banner['id']}}" class="block">
                     <img
                         src="{{ $image }}"
-                        class="w-full h-40 object-cover"
+                        class="w-full h-40 lg:h-80 object-cover"
                         alt="{{ $banner['title'] ?? 'Banner' }}"
                     >
                 </a>

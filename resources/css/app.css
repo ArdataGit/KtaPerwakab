@@ -283,3 +283,10 @@ body {
 	padding-top: 12rem;
     padding-bottom: 2rem;
 }
+
+/* Banner height override untuk desktop */
+@media (min-width: 1024px) {
+    .myHomeSwiper img {
+        height: 320px !important;
+    }
+}

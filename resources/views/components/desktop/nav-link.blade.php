@@ -19,6 +19,7 @@ if ($active === 'marketplace') $isActive = request()->routeIs('mobile.marketplac
 if ($active === 'bisnis') $isActive = request()->routeIs('mobile.bisnis*');
 if ($active === 'donation') $isActive = request()->routeIs('mobile.donation*');
 if ($active === 'poin') $isActive = request()->routeIs('mobile.poin*');
+if ($active === 'history') $isActive = request()->routeIs('mobile.history');
 if ($active === 'profile') $isActive = request()->routeIs('mobile.profile*');
 
 $classes = $isActive
