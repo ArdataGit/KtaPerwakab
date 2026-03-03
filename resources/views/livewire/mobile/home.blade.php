@@ -36,7 +36,10 @@ mount(function () {
 
 @php
     use Carbon\Carbon;
-    
+
+    // Pastikan $user selalu berupa array, bukan null
+    $user = is_array($user ?? null) ? $user : [];
+
     $role = $user['role'] ?? null;
     $expiredAtRaw = $user['expired_at'] ?? null;
     $isAnggota = $role === 'anggota';
