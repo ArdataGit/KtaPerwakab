@@ -74,7 +74,11 @@ mount(function () {
                 <div class="p-5">
                     <h1 class="text-xl font-bold text-gray-900 mb-3 leading-snug">{{ $history['title'] ?? 'Tentang Kami' }}</h1>
                     
-                    <div class="text-gray-700 text-sm leading-relaxed prose prose-sm max-w-none prose-img:rounded-xl prose-img:shadow-sm prose-a:text-green-600 prose-headings:text-gray-900 space-y-4">
+                    <style>
+                        .content-wysiwyg img { display: inline-block !important; margin: 0 auto; max-width: 100%; height: auto; }
+                        .content-wysiwyg p { width: 100%; }
+                    </style>
+                    <div class="text-gray-700 text-sm leading-relaxed prose prose-sm max-w-none prose-img:rounded-xl prose-img:shadow-sm content-wysiwyg prose-a:text-green-600 prose-headings:text-gray-900 space-y-4">
                         {!! $history['content'] ?? '' !!}
                     </div>
                 </div>
@@ -137,7 +141,11 @@ mount(function () {
                         <div class="p-8 lg:p-10">
                             <h2 class="text-2xl font-bold text-gray-900 mb-6 leading-snug">{{ $history['title'] ?? 'Tentang Kami' }}</h2>
 
-                            <div class="text-gray-700 leading-relaxed prose prose-lg max-w-none prose-img:rounded-xl prose-img:shadow-sm prose-a:text-green-600 prose-headings:text-gray-900 space-y-4">
+                            <style>
+                                .content-wysiwyg img { display: inline-block !important; margin: 0 auto; max-width: 100%; height: auto; }
+                                .content-wysiwyg p { width: 100%; }
+                            </style>
+                            <div class="text-gray-700 leading-relaxed prose prose-lg max-w-none prose-img:rounded-xl prose-img:shadow-sm content-wysiwyg prose-a:text-green-600 prose-headings:text-gray-900 space-y-4">
                                 {!! $history['content'] ?? '' !!}
                             </div>
                         </div>
