@@ -53,6 +53,11 @@ mount(function ($id) {
     // CHECK LIMIT
     if ($this->userId) {
         $limitRes = DonationApiService::checkLimit();
+    //     dd([
+    //     'userId' => $this->userId,
+    //     'status' => $limitRes->status(),
+    //     'response' => $limitRes->json(),
+    // ]);
         if ($limitRes->successful()) {
             $limitData = $limitRes->json('data');
             $this->canDonate = $limitData['can_donate'] ?? true;
