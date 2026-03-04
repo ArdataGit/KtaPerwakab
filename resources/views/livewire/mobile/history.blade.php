@@ -130,7 +130,7 @@ mount(function () {
                         </div>
                     @else
                         @if(!empty($history['featured_image']))
-                            <div class="w-full aspect-[21/9] overflow-hidden">
+                            <div class="w-full aspect-[16/9] overflow-hidden">
                                 <img src="{{ $history['featured_image'] }}"
                                      alt="{{ $history['title'] ?? 'Tentang Kami' }}"
                                      class="w-full h-full object-cover"

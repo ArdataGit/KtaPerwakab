@@ -76,6 +76,29 @@ mount(fn () => $this->load());
 
 
 <x-layouts.mobile title="Tukar Poin">
+    <div x-data="{ show: false, id: null, name: '', points: 0, open(id, name, pts){ this.id=id; this.name=name; this.points=pts; this.show=true; } }">
+        {{-- CONFIRMATION MODAL --}}
+        <div x-show="show" x-cloak style="display: none;" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4 transition-opacity">
+            <div @click.away="show = false" class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl transform transition-all relative">
+                <div class="text-center">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 mb-4">
+                        <svg class="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Penukaran</h3>
+                    <p class="text-sm text-gray-500 mb-4">Apakah Anda yakin ingin menukar poin Anda dengan produk ini?</p>
+                    <div class="bg-blue-50/50 rounded-xl p-3 mb-6 border border-blue-100">
+                        <p class="text-base font-semibold text-gray-800 mb-1" x-text="name"></p>
+                        <p class="text-sm font-bold text-blue-600">🪙 <span x-text="points"></span> Poin</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" @click="show = false" class="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition">Batal</button>
+                    <button type="button" @click="$wire.redeem(id); show = false" class="flex-1 rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition">Ya, Tukar</button>
+                </div>
+            </div>
+        </div>
 
     {{-- SNACKBAR --}}
     @if($snackbar['message'])
@@ -159,7 +182,7 @@ mount(fn () => $this->load());
                                         </a>
 
                                         @if($saldo >= $item['jumlah_poin'])
-                                            <button wire:click="redeem({{ $item['id'] }})" wire:loading.attr="disabled"
+                                            <button @click="open({{ $item['id'] }}, '{{ addslashes($item['produk']) }}', {{ $item['jumlah_poin'] }})" wire:loading.attr="disabled" wire:target="redeem({{ $item['id'] }})"
                                                 class="text-xs px-3 py-1 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 disabled:opacity-50">
                                                 <span wire:loading.remove wire:target="redeem({{ $item['id'] }})">Tukar</span>
                                                 <span wire:loading wire:target="redeem({{ $item['id'] }})" class="flex items-center gap-1">
@@ -189,10 +212,34 @@ mount(fn () => $this->load());
 
     <div class="h-24"></div>
     <x-mobile.navbar active="poin" />
+    </div>
 
     {{-- ==================== DESKTOP VIEW ==================== --}}
     <x-slot:desktop>
         <x-desktop.layout title="Tukar Poin">
+            <div x-data="{ show: false, id: null, name: '', points: 0, open(id, name, pts){ this.id=id; this.name=name; this.points=pts; this.show=true; } }">
+                {{-- CONFIRMATION MODAL DESKTOP --}}
+                <div x-show="show" x-cloak style="display: none;" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4 transition-opacity">
+                    <div @click.away="show = false" class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl transform transition-all relative">
+                        <div class="text-center">
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 mb-4">
+                                <svg class="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Penukaran</h3>
+                            <p class="text-sm text-gray-500 mb-4">Apakah Anda yakin ingin menukar poin Anda dengan produk ini?</p>
+                            <div class="bg-blue-50/50 rounded-xl p-3 mb-6 border border-blue-100">
+                                <p class="text-base font-semibold text-gray-800 mb-1" x-text="name"></p>
+                                <p class="text-sm font-bold text-blue-600">🪙 <span x-text="points"></span> Poin</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" @click="show = false" class="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition">Batal</button>
+                            <button type="button" @click="$wire.redeem(id); show = false" class="flex-1 rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition">Ya, Tukar</button>
+                        </div>
+                    </div>
+                </div>
             <div class="max-w-5xl mx-auto">
                 <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
                     <a href="{{ route('mobile.poin.index') }}" class="hover:text-green-600 transition">&larr; Kembali ke Poin</a>
@@ -224,7 +271,7 @@ mount(fn () => $this->load());
                             <div class="flex gap-2 mt-3 justify-end">
                                 <a href="{{ route('mobile.poin.detail', $item['id']) }}" class="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition">Detail</a>
                                 @if($saldo >= $item['jumlah_poin'])
-                                    <button wire:click="redeem({{ $item['id'] }})" wire:loading.attr="disabled"
+                                    <button @click="open({{ $item['id'] }}, '{{ addslashes($item['produk']) }}', {{ $item['jumlah_poin'] }})" wire:loading.attr="disabled" wire:target="redeem({{ $item['id'] }})"
                                         class="text-xs px-3 py-1.5 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 transition disabled:opacity-50">
                                         <span wire:loading.remove wire:target="redeem({{ $item['id'] }})">Tukar</span>
                                         <span wire:loading wire:target="redeem({{ $item['id'] }})" class="flex items-center gap-1">
@@ -243,6 +290,7 @@ mount(fn () => $this->load());
                         <div class="col-span-full bg-white rounded-xl p-8 text-center text-sm text-gray-500 border border-gray-100">Belum ada produk penukaran poin</div>
                     @endforelse
                 </div>
+            </div>
             </div>
         </x-desktop.layout>
     </x-slot:desktop>

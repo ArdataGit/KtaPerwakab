@@ -77,7 +77,7 @@
                     <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden absolute inset-0 w-full h-full">
                         {{-- TEMPLATE BACKGROUND --}}
                         <img src="{{ $backImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
-                        {{-- HEADER VISI --}}
+                        <!-- {{-- HEADER VISI --}}
                         <div class="absolute top-[100px] left-0 w-full z-10 text-center px-4">
                             <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">
                                 VISI
@@ -107,7 +107,7 @@
                             <p class="text-center font-semibold text-white text-[14px] truncate">
                                 ID {{ $id }}
                             </p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@
                                     {{-- TEMPLATE BACKGROUND --}}
                                     <img src="{{ $backImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                                     {{-- HEADER VISI --}}
-                                    <div class="absolute top-[100px] z-10 left-0 w-full text-center px-4">
+                                    <!-- <div class="absolute top-[100px] z-10 left-0 w-full text-center px-4">
                                         <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">
                                             VISI
                                         </p>
@@ -273,7 +273,7 @@
                                         <p class="text-center font-semibold text-white text-[14px] truncate">
                                             ID {{ $id }}
                                         </p>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>

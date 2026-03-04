@@ -1,20 +1,35 @@
 <div class="bg-white border-t border-gray-100 pt-8 pb-12 px-6 mt-8 mb-8">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
         <!-- Alamat -->
-        <div class="flex-1">
+        <div class="flex-1 w-full">
             <h3 class="text-gray-800 font-bold text-lg mb-3">Kantor Sekretariat Perwakab</h3>
             <p class="text-gray-600 text-sm leading-relaxed mb-2">
                 <span class="mr-1">📍</span> Komp. Ruko The Capital Superblok Imperium Blok B No. 19 - 20, Batam 29444
             </p>
             <a href="https://maps.app.goo.gl/eqE194Hkw7V2JX8Z6?g_st=ac" 
                target="_blank" 
-               class="inline-flex items-center text-green-600 hover:text-green-700 text-sm font-semibold transition">
+               class="inline-flex items-center text-green-600 hover:text-green-700 text-sm font-semibold transition mb-4">
                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
                 Buka di Google Maps
             </a>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="flex-1 w-full">
+            <div class="w-full h-48 md:h-56 rounded-xl overflow-hidden border border-gray-100 shadow-sm relative z-0">
+                <iframe 
+                    src="https://maps.google.com/maps?q=Komp.%20Ruko%20The%20Capital%20Superblok%20Imperium%20Batam&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
         </div>
 
         <!-- Sosial Media -->
