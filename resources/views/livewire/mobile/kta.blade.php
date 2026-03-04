@@ -46,42 +46,46 @@
             class="w-full flex flex-col items-center">
             {{-- KTA CONTAINER --}}
             <div class="relative perspective w-[280px] max-w-full h-[440px] md:h-[480px]">
-                <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
+                <div :class="side === 'back' ? 'flipper is-flipped w-full h-full' : 'flipper w-full h-full'">
                     {{-- ============= FRONT SIDE ============= --}}
-                    <div class="face face-front bg-white rounded-2xl shadow-lg overflow-hidden ">
-                        <img src="{{ $frontImage }}" class="w-full object-contain">
+                    <div class="face face-front bg-white rounded-2xl shadow-lg overflow-hidden absolute inset-0 w-full h-full">
+                        <img src="{{ $frontImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                         {{-- FOTO USER --}}
                         <img src="{{ $photo }}"
-                            class="absolute top-[105px] left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
+                            class="absolute top-[105px] z-10 left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
                         {{-- NAMA --}}
-                        <p class="absolute top-[250px] w-full text-center font-bold text-gray-900 text-[15px]">
-                            {{ $name }}
-                        </p>
+                        <div class="absolute top-[250px] w-full z-10 px-4">
+                            <p class="text-center font-bold text-white text-[15px] truncate">
+                                {{ $name }}
+                            </p>
+                        </div>
                         {{-- JABATAN (opsional) --}}
-                        <p class="absolute top-[270px] w-full text-center text-gray-600 text-xs">
-                            Anggota
-                        </p>
+                        <div class="absolute top-[270px] w-full z-10 px-4">
+                            <p class="text-center text-white text-xs truncate">
+                                Anggota
+                            </p>
+                        </div>
                         {{-- DETAIL --}}
-                        <div class="absolute top-[305px] left-8 text-[11px] text-gray-700 leading-4">
-                            <p><strong>ID No</strong> : {{ $id }}</p>
-                            <p><strong>Email</strong> : {{ $email }}</p>
-                            <p><strong>Phone</strong> : {{ $phone }}</p>
-                            <p><strong>Expired</strong> : {{ $expired }}</p>
+                        <div class="absolute top-[305px] left-8 z-10 text-[11px] text-white leading-4 right-8">
+                            <p class="truncate"><strong>ID No</strong> : {{ $id }}</p>
+                            <p class="truncate"><strong>Email</strong> : {{ $email }}</p>
+                            <p class="truncate"><strong>Phone</strong> : {{ $phone }}</p>
+                            <p class="truncate"><strong>Expired</strong> : {{ $expired }}</p>
                         </div>
                     </div>
                     {{-- ============= BACK SIDE ============= --}}
-                    <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden ">
+                    <div class="face face-back bg-white rounded-2xl shadow-lg overflow-hidden absolute inset-0 w-full h-full">
                         {{-- TEMPLATE BACKGROUND --}}
-                        <img src="{{ $backImage }}" class="w-full object-contain">
+                        <img src="{{ $backImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                         {{-- HEADER VISI --}}
-                        <div class="absolute top-[100px] left-0 w-full text-center">
+                        <div class="absolute top-[100px] left-0 w-full z-10 text-center px-4">
                             <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">
                                 VISI
                             </p>
                         </div>
                         {{-- TEKS VISI --}}
-                        <div class="absolute top-[140px] left-0 w-full px-6 text-center">
-                            <p class="text-gray-700 text-[12px] leading-[16px]">
+                        <div class="absolute top-[140px] left-0 w-full z-10 px-6 text-center">
+                            <p class="text-white text-[12px] leading-[16px] line-clamp-6">
                                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                                 incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
                                 consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
@@ -89,17 +93,21 @@
                             </p>
                         </div>
                         {{-- JABATAN --}}
-                        <p
-                            class="absolute top-[255px] left-0 w-full text-center text-[12px] font-semibold text-gray-800">
-                            Ketua Umum
-                        </p>
+                        <div class="absolute top-[255px] left-0 w-full z-10 px-4">
+                            <p
+                                class="text-center text-[12px] font-semibold text-white truncate">
+                                Ketua Umum
+                            </p>
+                        </div>
                         {{-- TANDA TANGAN --}}
                         <img src="/images/assets/kta/ttd.png"
-                            class="absolute top-[280px] left-1/2 -translate-x-1/2 w-28 opacity-90">
+                            class="absolute top-[280px] left-1/2 z-10 -translate-x-1/2 w-28 opacity-90">
                         {{-- ID ANGGOTA --}}
-                        <p class="absolute bottom-[95px] w-full text-center font-semibold text-gray-900 text-[14px]">
-                            ID {{ $id }}
-                        </p>
+                        <div class="absolute bottom-[95px] w-full z-10 px-4">
+                            <p class="text-center font-semibold text-white text-[14px] truncate">
+                                ID {{ $id }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -205,42 +213,46 @@
                         class="w-full flex flex-col items-center">
                         {{-- KTA CONTAINER --}}
                         <div class="relative perspective w-[280px] max-w-full h-[440px]">
-                            <div :class="side === 'back' ? 'flipper is-flipped' : 'flipper'">
+                            <div :class="side === 'back' ? 'flipper is-flipped w-full h-full' : 'flipper w-full h-full'">
                                 {{-- ============= FRONT SIDE ============= --}}
-                                <div class="face face-front bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5">
-                                    <img src="{{ $frontImage }}" class="w-full object-contain">
+                                <div class="face face-front bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5 absolute inset-0 w-full h-full">
+                                    <img src="{{ $frontImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                                     {{-- FOTO USER --}}
                                     <img src="{{ $photo }}"
-                                        class="absolute top-[105px] left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
+                                        class="absolute top-[65px] z-10 left-1/2 -translate-x-1/2 w-28 h-28 object-cover rounded-full border shadow">
                                     {{-- NAMA --}}
-                                    <p class="absolute top-[250px] w-full text-center font-bold text-gray-900 text-[15px]">
-                                        {{ $name }}
-                                    </p>
+                                    <div class="absolute top-[182px] w-full z-10 px-4">
+                                        <p class="text-center font-bold text-white text-[15px] truncate">
+                                            {{ $name }}
+                                        </p>
+                                    </div>
                                     {{-- JABATAN (opsional) --}}
-                                    <p class="absolute top-[270px] w-full text-center text-gray-600 text-xs">
-                                        Anggota
-                                    </p>
+                                    <div class="absolute top-[208px] w-full z-10 px-4">
+                                        <p class="text-center text-white text-xs truncate">
+                                            Anggota
+                                        </p>
+                                    </div>
                                     {{-- DETAIL --}}
-                                    <div class="absolute top-[305px] left-8 text-[11px] text-gray-700 leading-4">
-                                        <p><strong>ID No</strong> : {{ $id }}</p>
-                                        <p><strong>Email</strong> : {{ $email }}</p>
-                                        <p><strong>Phone</strong> : {{ $phone }}</p>
-                                        <p><strong>Expired</strong> : {{ $expired }}</p>
+                                    <div class="absolute top-[246px] left-8 z-10 text-[11px] text-white leading-4 right-8">
+                                        <p class="truncate"><strong>ID No</strong> : {{ $id }}</p>
+                                        <p class="truncate"><strong>Email</strong> : {{ $email }}</p>
+                                        <p class="truncate"><strong>Phone</strong> : {{ $phone }}</p>
+                                        <p class="truncate"><strong>Expired</strong> : {{ $expired }}</p>
                                     </div>
                                 </div>
                                 {{-- ============= BACK SIDE ============= --}}
-                                <div class="face face-back bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5">
+                                <div class="face face-back bg-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-black/5 absolute inset-0 w-full h-full">
                                     {{-- TEMPLATE BACKGROUND --}}
-                                    <img src="{{ $backImage }}" class="w-full object-contain">
+                                    <img src="{{ $backImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                                     {{-- HEADER VISI --}}
-                                    <div class="absolute top-[100px] left-0 w-full text-center">
+                                    <div class="absolute top-[100px] z-10 left-0 w-full text-center px-4">
                                         <p class="bg-[#F59E0B] text-white font-bold text-[14px] py-1 w-[80%] mx-auto rounded">
                                             VISI
                                         </p>
                                     </div>
                                     {{-- TEKS VISI --}}
-                                    <div class="absolute top-[140px] left-0 w-full px-6 text-center">
-                                        <p class="text-gray-700 text-[12px] leading-[16px]">
+                                    <div class="absolute top-[140px] z-10 left-0 w-full px-6 text-center">
+                                        <p class="text-white text-[12px] leading-[16px] line-clamp-6">
                                             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                                             incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet,
                                             consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
@@ -248,17 +260,20 @@
                                         </p>
                                     </div>
                                     {{-- JABATAN --}}
-                                    <p
-                                        class="absolute top-[255px] left-0 w-full text-center text-[12px] font-semibold text-gray-800">
-                                        Ketua Umum
-                                    </p>
+                                    <div class="absolute top-[255px] z-10 left-0 w-full px-4">
+                                        <p class="text-center text-[12px] font-semibold text-white truncate">
+                                            Ketua Umum
+                                        </p>
+                                    </div>
                                     {{-- TANDA TANGAN --}}
                                     <img src="/images/assets/kta/ttd.png"
-                                        class="absolute top-[280px] left-1/2 -translate-x-1/2 w-28 opacity-90">
+                                        class="absolute top-[280px] z-10 left-1/2 -translate-x-1/2 w-28 opacity-90">
                                     {{-- ID ANGGOTA --}}
-                                    <p class="absolute bottom-[95px] w-full text-center font-semibold text-gray-900 text-[14px]">
-                                        ID {{ $id }}
-                                    </p>
+                                    <div class="absolute bottom-[95px] w-full z-10 px-4">
+                                        <p class="text-center font-semibold text-white text-[14px] truncate">
+                                            ID {{ $id }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
