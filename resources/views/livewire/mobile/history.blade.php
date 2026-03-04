@@ -18,7 +18,6 @@ mount(function () {
     }
 
     $response = OrganizationHistoryApiService::get($token);
-
     if ($response->successful()) {
         $this->history = $response->json('data');
     } else {
@@ -65,7 +64,7 @@ mount(function () {
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                 @if(!empty($history['featured_image']))
                     <div class="w-full aspect-video overflow-hidden">
-                        <img src="{{ api_profile_url($history['featured_image']) }}" 
+                        <img src="{{ $history['featured_image'] }}" 
                              alt="{{ $history['title'] ?? 'Tentang Kami' }}" 
                              class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
                              onerror="this.src='/images/assets/default-article.png'">
@@ -128,7 +127,7 @@ mount(function () {
                     @else
                         @if(!empty($history['featured_image']))
                             <div class="w-full aspect-[21/9] overflow-hidden">
-                                <img src="{{ api_profile_url($history['featured_image']) }}"
+                                <img src="{{ $history['featured_image'] }}"
                                      alt="{{ $history['title'] ?? 'Tentang Kami' }}"
                                      class="w-full h-full object-cover"
                                      onerror="this.src='/images/assets/default-article.png'">
