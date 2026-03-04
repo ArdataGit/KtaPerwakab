@@ -28,7 +28,7 @@
                 <div class="text-center bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
                     <img src="/images/assets/iuran.png" class="mx-auto w-24 mb-4 grayscale opacity-50">
                     <h2 class="text-xl font-bold text-gray-700 mb-2">Halaman sedang disiapkan. Silakan menunggu beberapa saat.</h2>
-                    <p class="text-gray-500">Halaman ini baru mendukung akses melalui mobile/smartphone.</p>
+                    <!-- <p class="text-gray-500">Halaman ini baru mendukung akses melalui mobile/smartphone.</p> -->
                 </div>
             </div>
         @endif
