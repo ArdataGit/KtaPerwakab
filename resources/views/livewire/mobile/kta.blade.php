@@ -52,21 +52,21 @@
                         <img src="{{ $frontImage }}" class="absolute inset-0 w-full h-full object-cover z-0">
                         {{-- FOTO USER --}}
                         <img src="{{ $photo }}"
-                            class="absolute top-[105px] z-10 left-1/2 -translate-x-1/2 w-24 h-28 object-cover rounded-md border shadow">
+                            class="absolute top-[62px] z-10 left-1/2 -translate-x-1/2 w-28 h-28 object-cover rounded-full border shadow">
                         {{-- NAMA --}}
-                        <div class="absolute top-[250px] w-full z-10 px-4">
+                        <div class="absolute top-[180px] w-full z-10 px-4">
                             <p class="text-center font-bold text-white text-[15px] truncate">
                                 {{ $name }}
                             </p>
                         </div>
                         {{-- JABATAN (opsional) --}}
-                        <div class="absolute top-[270px] w-full z-10 px-4">
+                        <div class="absolute top-[205px] w-full z-10 px-4">
                             <p class="text-center text-white text-xs truncate">
                                 Anggota
                             </p>
                         </div>
                         {{-- DETAIL --}}
-                        <div class="absolute top-[305px] left-8 z-10 text-[11px] text-white leading-4 right-8">
+                        <div class="absolute top-[250px] left-8 z-10 text-[11px] text-white leading-4 right-8">
                             <p class="truncate"><strong>ID No</strong> : {{ $id }}</p>
                             <p class="truncate"><strong>Email</strong> : {{ $email }}</p>
                             <p class="truncate"><strong>Phone</strong> : {{ $phone }}</p>
