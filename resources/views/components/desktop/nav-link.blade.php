@@ -21,6 +21,7 @@ if ($active === 'donation') $isActive = request()->routeIs('mobile.donation*');
 if ($active === 'poin') $isActive = request()->routeIs('mobile.poin*');
 if ($active === 'history') $isActive = request()->routeIs('mobile.history');
 if ($active === 'profile') $isActive = request()->routeIs('mobile.profile*');
+if ($active === 'jejak-hidup') $isActive = request()->routeIs('mobile.donation.jejak-hidup');
 
 $classes = $isActive
             ? 'group flex items-center px-4 py-3 text-sm font-semibold rounded-xl bg-green-50 text-green-700 transition duration-200'
