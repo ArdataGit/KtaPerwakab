@@ -62,4 +62,39 @@ class DonationApiService
             config('services.kta_api.base_url') . '/donations/check-limit'
         );
     }
+
+    /**
+     * GET DAFTAR BANK (MANUAL TRANSFER)
+     */
+    public static function banks()
+    {
+        return self::client()->get(
+            config('services.kta_api.base_url') . '/donations/banks'
+        );
+    }
+
+    /**
+     * UPLOAD BUKTI TRANSFER MANUAL
+     */
+    public static function uploadProof(int $donationId, $file)
+    {
+        return Http::withToken(session('token'))
+            ->acceptJson()
+            ->timeout(30)
+            ->attach('payment_proof', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
+            ->post(
+            config('services.kta_api.base_url') . "/donations/{$donationId}/upload-proof"
+        );
+    }
+
+    /**
+     * JEJAK HIDUP
+     */
+    public static function jejakHidup(array $params = [])
+    {
+        return self::client()->get(
+            config('services.kta_api.base_url') . '/jejak-hidup',
+            array_filter($params)
+        );
+    }
 }

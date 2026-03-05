@@ -15,7 +15,9 @@ mount(function () {
         $this->totalPaid = (int) $res->json('data.total_paid');
         $this->donations = $res->json('data.donations') ?? [];
     }
-//dd($this->donations);
+
+    // dd($res->json());   // cek isi response
+
 });
 ?>
 <x-layouts.mobile title="Donasi Saya">
@@ -29,6 +31,13 @@ mount(function () {
     </div>
 
     <div class="px-4 mt-4 space-y-4">
+
+        {{-- FLASH SUCCESS --}}
+        @if (session('success'))
+            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-700">
+                ✅ {{ session('success') }}
+            </div>
+        @endif
 
         {{-- TOTAL --}}
         <div class="flex justify-between text-sm text-gray-700">
@@ -56,25 +65,38 @@ mount(function () {
 
                       {{-- STATUS BADGE --}}
                       @if ($item['status'] === 'PAID')
-                          <span class="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700">
-                              Sudah dibayar
+                          <span class="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+                              ✅ Lunas
+                          </span>
+                      @elseif ($item['status'] === 'WAITING_VERIFICATION')
+                          <span class="text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-medium">
+                              🕐 Menunggu Verifikasi
+                          </span>
+                      @elseif ($item['status'] === 'EXPIRED')
+                          <span class="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">
+                              Kedaluwarsa
                           </span>
                       @else
-                          <span class="text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-700">
+                          <span class="text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">
                               Pending
                           </span>
                       @endif
                   </div>
 
-                  {{-- CTA CHECKOUT --}}
-                  @if (
-                      $item['status'] === 'PENDING'
-                      && isset($item['checkout_url']['data']['checkout_url'])
-                  )
+                  {{-- CTA: Bayar Tripay --}}
+                  @if ($item['status'] === 'PENDING' && isset($item['checkout_url']['data']['checkout_url']))
                       <a href="{{ $item['checkout_url']['data']['checkout_url'] }}"
                          class="block text-center text-sm font-medium bg-green-600 text-white py-2 rounded-lg"
                          target="_blank" rel="noopener">
                           Lanjutkan Pembayaran
+                      </a>
+                  @endif
+
+                  {{-- CTA: Upload Bukti Manual --}}
+                  @if (in_array($item['status'], ['PENDING', 'UNPAID']) && !isset($item['checkout_url']['data']['checkout_url']))
+                      <a href="{{ route('mobile.donation.upload-proof', $item['id']) }}"
+                         class="block text-center text-sm font-medium bg-amber-500 text-white py-2 rounded-lg">
+                          📤 Upload Bukti Transfer
                       </a>
                   @endif
 
@@ -113,23 +135,39 @@ mount(function () {
 
                 <div class="space-y-3">
                     @forelse ($donations as $item)
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 flex items-center justify-between hover:shadow-md transition">
-                            <div>
-                                <p class="font-semibold text-gray-900">{{ $item['campaign_title'] }}</p>
-                                <p class="text-sm text-green-600 mt-1">Rp {{ number_format($item['amount'], 0, ',', '.') }}</p>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                @if ($item['status'] === 'PAID')
-                                    <span class="text-xs px-3 py-1.5 rounded-full bg-green-100 text-green-700 font-medium">Sudah dibayar</span>
-                                @else
-                                    <span class="text-xs px-3 py-1.5 rounded-full bg-orange-100 text-orange-700 font-medium">Pending</span>
-                                @endif
-                                @if ($item['status'] === 'PENDING' && isset($item['checkout_url']['data']['checkout_url']))
-                                    <a href="{{ $item['checkout_url']['data']['checkout_url'] }}" target="_blank"
-                                        class="text-xs px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition">
-                                        Lanjutkan Pembayaran
-                                    </a>
-                                @endif
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 space-y-3 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-semibold text-gray-900">{{ $item['campaign_title'] }}</p>
+                                    <p class="text-sm text-green-600 mt-1">Rp {{ number_format($item['amount'], 0, ',', '.') }}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    @if ($item['status'] === 'PAID')
+                                        <span class="text-xs px-3 py-1.5 rounded-full bg-green-100 text-green-700 font-medium">✅ Lunas</span>
+                                    @elseif ($item['status'] === 'WAITING_VERIFICATION')
+                                        <span class="text-xs px-3 py-1.5 rounded-full bg-amber-100 text-amber-700 font-medium">🕐 Menunggu Verifikasi</span>
+                                    @elseif ($item['status'] === 'EXPIRED')
+                                        <span class="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 font-medium">Kedaluwarsa</span>
+                                    @else
+                                        <span class="text-xs px-3 py-1.5 rounded-full bg-orange-100 text-orange-700 font-medium">Pending</span>
+                                    @endif
+
+                                    {{-- CTA Tripay --}}
+                                    @if ($item['status'] === 'PENDING' && isset($item['checkout_url']['data']['checkout_url']))
+                                        <a href="{{ $item['checkout_url']['data']['checkout_url'] }}" target="_blank"
+                                            class="text-xs px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition">
+                                            Lanjutkan Pembayaran
+                                        </a>
+                                    @endif
+
+                                    {{-- CTA Manual --}}
+                                    @if (in_array($item['status'], ['PENDING', 'UNPAID']) && !isset($item['checkout_url']['data']['checkout_url']))
+                                        <a href="{{ route('mobile.donation.upload-proof', $item['id']) }}"
+                                            class="text-xs px-4 py-1.5 bg-amber-500 text-white rounded-full font-semibold hover:bg-amber-600 transition">
+                                            📤 Upload Bukti
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @empty

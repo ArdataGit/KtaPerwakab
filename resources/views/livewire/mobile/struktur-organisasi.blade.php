@@ -57,14 +57,16 @@ mount(function () {
                 <p class="text-red-600">{{ $error }}</p>
             </div>
 
-        @elseif($struktur && isset($struktur['file_url']))
+        @elseif($struktur)
             @php
-                $fileUrl = $struktur['file_url'];
-                $extension = strtolower(pathinfo($fileUrl, PATHINFO_EXTENSION));
-                $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                $isPdf = $extension === 'pdf';
+                $fileUrl  = $struktur['file_url'] ?? null;
+                $gallery  = $struktur['gallery'] ?? [];
+                $extension = $fileUrl ? strtolower(pathinfo($fileUrl, PATHINFO_EXTENSION)) : '';
+                $isImage  = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                $isPdf    = $extension === 'pdf';
             @endphp
 
+            @if($fileUrl)
             {{-- ================= IMAGE ================= --}}
             @if($isImage)
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -144,12 +146,74 @@ mount(function () {
                     </a>
                 </div>
             @endif
+            @endif {{-- end @if($fileUrl) --}}
+
+            {{-- GALLERY CAROUSEL (Mobile) --}}
+            @if(!empty($gallery))
+                <div class="mt-6" x-data="{
+                    current: 0,
+                    total: {{ count($gallery) }},
+                    lightbox: null,
+                    prev() { this.current = this.current > 0 ? this.current - 1 : this.total - 1; },
+                    next() { this.current = this.current < this.total - 1 ? this.current + 1 : 0; }
+                }">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Galeri Foto</h3>
+
+                    <div class="relative w-full">
+                        {{-- Slides --}}
+                        @foreach($gallery as $i => $img)
+                        <div x-show="current === {{ $i }}" class="w-full">
+                            <button type="button" @click="lightbox = '{{ $img['image_url'] }}'" class="w-full block">
+                                <img src="{{ $img['image_url'] }}" alt="Galeri {{ $i + 1 }}"
+                                     class="w-full h-auto rounded-xl object-contain shadow-sm border border-gray-100">
+                            </button>
+                        </div>
+                        @endforeach
+
+                        {{-- Prev --}}
+                        <button @click="prev()" x-show="total > 1"
+                                class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow rounded-full w-9 h-9 flex items-center justify-center text-gray-600 hover:text-green-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                        </button>
+
+                        {{-- Next --}}
+                        <button @click="next()" x-show="total > 1"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow rounded-full w-9 h-9 flex items-center justify-center text-gray-600 hover:text-green-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+
+                    {{-- Dots --}}
+                    <div class="flex justify-center gap-1.5 mt-3" x-show="total > 1">
+                        @foreach($gallery as $i => $img)
+                        <button @click="current = {{ $i }}"
+                                :class="current === {{ $i }} ? 'bg-green-600 w-4' : 'bg-gray-300 w-2'"
+                                class="h-2 rounded-full transition-all duration-300"></button>
+                        @endforeach
+                    </div>
+
+                    {{-- Counter --}}
+                    <p class="text-center text-xs text-gray-400 mt-1" x-show="total > 1">
+                        <span x-text="current + 1"></span> / {{ count($gallery) }}
+                    </p>
+
+                    {{-- Lightbox --}}
+                    <template x-if="lightbox">
+                        <div class="fixed inset-0 z-[9999] bg-black/85 flex items-center justify-center px-4"
+                             @click.self="lightbox = null">
+                            <div class="relative w-full max-w-lg">
+                                <button @click="lightbox = null"
+                                        class="absolute -top-10 right-0 text-white text-sm opacity-80 hover:opacity-100">✕ Tutup</button>
+                                <img :src="lightbox" class="w-full rounded-2xl shadow-2xl">
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            @endif
 
         @else
             <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                <p class="text-gray-600">
-                    Data struktur organisasi tidak tersedia
-                </p>
+                <p class="text-gray-600">Data struktur organisasi tidak tersedia</p>
             </div>
         @endif
 
@@ -184,14 +248,16 @@ mount(function () {
                         <p class="text-red-600 font-medium">{{ $error }}</p>
                     </div>
 
-                @elseif($struktur && isset($struktur['file_url']))
+                @elseif($struktur)
                     @php
-                        $fileUrl = $struktur['file_url'];
-                        $extension = strtolower(pathinfo($fileUrl, PATHINFO_EXTENSION));
-                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                        $isPdf = $extension === 'pdf';
+                        $fileUrl   = $struktur['file_url'] ?? null;
+                        $gallery   = $struktur['gallery'] ?? [];
+                        $extension = $fileUrl ? strtolower(pathinfo($fileUrl, PATHINFO_EXTENSION)) : '';
+                        $isImage   = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        $isPdf     = $extension === 'pdf';
                     @endphp
 
+                    @if($fileUrl)
                     {{-- IMAGE --}}
                     @if($isImage)
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -294,6 +360,72 @@ mount(function () {
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                 Download File
                             </a>
+                        </div>
+                    @endif
+                    @endif {{-- end @if($fileUrl) --}}
+
+                    {{-- GALLERY CAROUSEL (Desktop) --}}
+                    @if(!empty($gallery))
+                        <div class="mt-8" x-data="{
+                            current: 0,
+                            total: {{ count($gallery) }},
+                            lightbox: null,
+                            prev() { this.current = this.current > 0 ? this.current - 1 : this.total - 1; },
+                            next() { this.current = this.current < this.total - 1 ? this.current + 1 : 0; }
+                        }">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Galeri Foto</h3>
+
+                            <div class="relative w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                @foreach($gallery as $i => $img)
+                                <div x-show="current === {{ $i }}" class="w-full">
+                                    <button type="button" @click="lightbox = '{{ $img['image_url'] }}'" class="w-full block">
+                                        <img src="{{ $img['image_url'] }}" alt="Galeri {{ $i + 1 }}"
+                                             class="w-full h-auto object-contain max-h-[520px]">
+                                    </button>
+                                </div>
+                                @endforeach
+
+                                {{-- Prev --}}
+                                <button @click="prev()" x-show="total > 1"
+                                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center text-gray-600 hover:text-green-600 transition">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                                </button>
+
+                                {{-- Next --}}
+                                <button @click="next()" x-show="total > 1"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center text-gray-600 hover:text-green-600 transition">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+
+                            {{-- Dots + Counter --}}
+                            <div class="flex items-center justify-center gap-3 mt-4" x-show="total > 1">
+                                <div class="flex gap-1.5">
+                                    @foreach($gallery as $i => $img)
+                                    <button @click="current = {{ $i }}"
+                                            :class="current === {{ $i }} ? 'bg-green-600 w-5' : 'bg-gray-300 w-2'"
+                                            class="h-2 rounded-full transition-all duration-300"></button>
+                                    @endforeach
+                                </div>
+                                <span class="text-xs text-gray-400">
+                                    <span x-text="current + 1"></span> / {{ count($gallery) }}
+                                </span>
+                            </div>
+
+                            {{-- Lightbox Desktop --}}
+                            <template x-if="lightbox">
+                                <div class="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm flex items-center justify-center px-6"
+                                     @click.self="lightbox = null">
+                                    <div class="relative max-w-5xl w-full">
+                                        <button @click="lightbox = null"
+                                                class="absolute -top-12 right-0 text-white font-semibold opacity-80 hover:opacity-100 flex items-center gap-2 text-sm">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                                            Tutup
+                                        </button>
+                                        <img :src="lightbox" class="w-full rounded-2xl shadow-2xl max-h-[85vh] object-contain">
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     @endif
 

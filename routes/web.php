@@ -204,8 +204,14 @@ Route::middleware('mobile.auth')->group(function () {
         '/donation-campaign/{id}/checkout',
         'mobile.donation.checkout'
     )->name('mobile.donation.checkout');
+    Volt::route('/donation-campaign/{id}/manual-checkout', 'mobile.donation.manual-checkout')
+        ->name('mobile.donation.manual-checkout');
+    Volt::route('/donation-campaign/{id}/upload-proof', 'mobile.donation.upload-proof')
+        ->name('mobile.donation.upload-proof');
     Volt::route('/my-donation', 'mobile.donation.my')
         ->name('mobile.donation.my');
+    Volt::route('/jejak-hidup', 'mobile.donation.jejak-hidup')
+        ->name('mobile.donation.jejak-hidup');
 
     Volt::route('/banner/{id}', 'mobile.banner.show')->name('mobile.banner.show');
 

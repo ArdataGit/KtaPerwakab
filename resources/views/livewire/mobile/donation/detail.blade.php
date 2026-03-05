@@ -9,17 +9,19 @@ state([
     // form
     'amount' => 0,
     'amount_display' => '',
+    'payment_type' => 'tripay', // 'tripay' | 'manual'
     'payment_method' => '',
+    'bank_id' => '',
     'donor_name' => '',
     'donor_email' => '',
     'donor_message' => '',
     'paymentMethods' => [],
+    'banks' => [],
     'showForm' => false,
     'donationHistories' => [],
-  
-  
+
     'userId' => null,
-    
+
     // Limit donation
     'canDonate' => true,
     'limitMessage' => '',
@@ -44,11 +46,16 @@ mount(function ($id) {
       //dd($this->donationHistories);
     }
     // PAYMENT METHODS (Tripay)
-     $paymentRes = TripayApiService::paymentMethods();
-  //dd($paymentRes);
-     if ($paymentRes->successful()) {
-         $this->paymentMethods = $paymentRes->json('data') ?? [];
-     }
+    $paymentRes = TripayApiService::paymentMethods();
+    if ($paymentRes->successful()) {
+        $this->paymentMethods = $paymentRes->json('data') ?? [];
+    }
+
+    // BANK LIST (Manual Transfer)
+    $bankRes = DonationApiService::banks();
+    if ($bankRes->successful()) {
+        $this->banks = $bankRes->json('data') ?? [];
+    }
 
     // CHECK LIMIT
     if ($this->userId) {
@@ -77,27 +84,56 @@ $toggleForm = function () {
  * SUBMIT DONASI
  */
 $submit = function () {
-  $this->validate([
-      'amount' => 'required|numeric|min:20000',
-      'payment_method' => 'required',
-      'donor_name' => 'nullable|string|max:191',
-      'donor_email' => 'nullable|email|max:191',
-  ]);
-    $response = DonationApiService::donate([
-        'campaign_id' => $this->campaign['id'],
-    	'user_id' => $this->userId,
-        'amount' => $this->amount,
-        'payment_method' => $this->payment_method,
-        'donor_name' => $this->donor_name,
-        'donor_email' => $this->donor_email,
-    ]);
+    // Validasi dinamis berdasarkan payment_type
+    $rules = [
+        'amount'       => 'required|numeric|min:20000',
+        'donor_name'   => 'nullable|string|max:191',
+        'donor_email'  => 'nullable|email|max:191',
+    ];
+
+    if ($this->payment_type === 'manual') {
+        $rules['bank_id'] = 'required';
+    } else {
+        $rules['payment_method'] = 'required';
+    }
+
+    $this->validate($rules);
+
+    $payload = [
+        'campaign_id'  => $this->campaign['id'],
+        'user_id'      => $this->userId,
+        'amount'       => $this->amount,
+        'payment_type' => $this->payment_type,
+        'donor_name'   => $this->donor_name,
+        'donor_email'  => $this->donor_email,
+    ];
+
+    if ($this->payment_type === 'manual') {
+        $payload['bank_id'] = $this->bank_id;
+    } else {
+        $payload['payment_method'] = $this->payment_method;
+    }
+
+    $response = DonationApiService::donate($payload);
+
     if ($response->successful()) {
         $donationId = $response->json('data.donation_id');
-        return redirect()->route(
-            'mobile.donation.checkout',
-            ['id' => $donationId]
-        );
+
+        if ($this->payment_type === 'manual') {
+            // Simpan info bank ke session agar manual-checkout bisa tampilkan tanpa panggil API show()
+            session()->put('manual_checkout', [
+                'donation_id'  => $donationId,
+                'campaign'     => $this->campaign['title'],
+                'amount'       => $this->amount,
+                'bank'         => $response->json('data.bank'),
+            ]);
+            return redirect()->route('mobile.donation.manual-checkout', ['id' => $donationId]);
+        }
+
+        return redirect()->route('mobile.donation.checkout', ['id' => $donationId]);
     }
+
+    $this->addError('submit', $response->json('message') ?? 'Gagal memproses donasi.');
 };
 ?>
 <x-layouts.mobile title="Donasi">
@@ -216,10 +252,32 @@ $submit = function () {
                     @enderror
                 </div>
                 <hr class="border-gray-100">
-                {{-- PAYMENT METHOD --}}
+                {{-- PAYMENT TYPE TOGGLE --}}
                 <div>
                     <p class="text-sm font-semibold text-gray-800 mb-2">
-                        Pilih Metode Pembayaran
+                        Metode Pembayaran
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button"
+                            wire:click="$set('payment_type', 'tripay')"
+                            class="py-3 rounded-2xl border-2 text-sm font-semibold transition
+                                {{ $payment_type === 'tripay' ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-300 text-gray-700' }}">
+                            💳 Payment Gateway
+                        </button>
+                        <button type="button"
+                            wire:click="$set('payment_type', 'manual')"
+                            class="py-3 rounded-2xl border-2 text-sm font-semibold transition
+                                {{ $payment_type === 'manual' ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-300 text-gray-700' }}">
+                            🏦 Transfer Manual
+                        </button>
+                    </div>
+                </div>
+
+                {{-- TRIPAY: Payment Method Dropdown --}}
+                @if ($payment_type === 'tripay')
+                <div>
+                    <p class="text-sm font-semibold text-gray-800 mb-2">
+                        Pilih Metode Tripay
                     </p>
                     <select
                       wire:model="payment_method"
@@ -235,6 +293,34 @@ $submit = function () {
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                @endif
+
+                {{-- MANUAL: Bank Dropdown --}}
+                @if ($payment_type === 'manual')
+                <div>
+                    <p class="text-sm font-semibold text-gray-800 mb-2">
+                        Pilih Rekening Tujuan
+                    </p>
+                    @if (empty($banks))
+                        <p class="text-xs text-red-500">Tidak ada rekening bank yang tersedia.</p>
+                    @else
+                    <select
+                      wire:model="bank_id"
+                      class="w-full border-2 border-gray-300 rounded-2xl px-4 py-3 text-base focus:border-green-500 focus:ring-0">
+                        <option value="">-- Pilih Bank --</option>
+                        @foreach ($banks as $bank)
+                            <option value="{{ $bank['id'] }}">
+                                {{ $bank['bank_name'] }} - {{ $bank['account_number'] }} ({{ $bank['account_name'] }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('bank_id')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                    @endif
+                </div>
+                @endif
+
                 {{-- DONOR PROFILE --}}
                 <div class="bg-gray-50 rounded-2xl p-4 space-y-3">
                     <p class="text-sm font-semibold text-gray-800">
@@ -358,9 +444,29 @@ $submit = function () {
                                             @error('amount') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
 
-                                        {{-- PAYMENT METHOD --}}
+                                        {{-- PAYMENT TYPE TOGGLE --}}
                                         <div>
                                             <p class="text-sm font-semibold text-gray-800 mb-2">Metode Pembayaran</p>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <button type="button"
+                                                    wire:click="$set('payment_type', 'tripay')"
+                                                    class="py-3 rounded-xl border-2 text-sm font-semibold transition
+                                                        {{ $payment_type === 'tripay' ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-green-400' }}">
+                                                    💳 Payment Gateway
+                                                </button>
+                                                <button type="button"
+                                                    wire:click="$set('payment_type', 'manual')"
+                                                    class="py-3 rounded-xl border-2 text-sm font-semibold transition
+                                                        {{ $payment_type === 'manual' ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-700 hover:border-green-400' }}">
+                                                    🏦 Transfer Manual
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {{-- TRIPAY: Dropdown --}}
+                                        @if ($payment_type === 'tripay')
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-800 mb-2">Pilih Metode Tripay</p>
                                             <select wire:model="payment_method"
                                                 class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-0 transition">
                                                 <option value="">-- Pilih --</option>
@@ -370,6 +476,26 @@ $submit = function () {
                                             </select>
                                             @error('payment_method') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
+                                        @endif
+
+                                        {{-- MANUAL: Bank Dropdown --}}
+                                        @if ($payment_type === 'manual')
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-800 mb-2">Pilih Rekening Tujuan</p>
+                                            @if (empty($banks))
+                                                <p class="text-xs text-red-500">Tidak ada rekening bank yang tersedia.</p>
+                                            @else
+                                            <select wire:model="bank_id"
+                                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-0 transition">
+                                                <option value="">-- Pilih Bank --</option>
+                                                @foreach ($banks as $bank)
+                                                    <option value="{{ $bank['id'] }}">{{ $bank['bank_name'] }} - {{ $bank['account_number'] }} ({{ $bank['account_name'] }})</option>
+                                                @endforeach
+                                            </select>
+                                            @error('bank_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                            @endif
+                                        </div>
+                                        @endif
 
                                         {{-- DONOR INFO --}}
                                         <div class="bg-gray-50 rounded-xl p-4 space-y-3">
