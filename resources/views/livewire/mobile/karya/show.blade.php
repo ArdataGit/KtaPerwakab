@@ -51,7 +51,9 @@ mount(function ($id) {
                     <div class="swiper-wrapper">
                         @forelse ($photoUrls as $url)
                             <div class="swiper-slide">
-                                <img src="{{ $url }}" class="w-full h-64 object-cover rounded-xl">
+                                <div class="w-full aspect-[16/9]">
+                                    <img src="{{ $url }}" class="w-full h-full object-cover rounded-xl">
+                                </div>
                             </div>
                         @empty
                             <div class="swiper-slide">
@@ -180,7 +182,10 @@ mount(function ($id) {
                         <div class="grid grid-cols-{{ min($photoUrls->count(), 3) }} gap-3 mb-8">
                             @foreach($photoUrls->take(6) as $url)
                                 <div class="rounded-2xl overflow-hidden shadow-lg">
-                                    <img src="{{ $url }}" class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
+                                    <div class="w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-lg">
+                                        <img src="{{ $url }}"
+                                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

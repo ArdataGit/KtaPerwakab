@@ -34,11 +34,14 @@ mount(function ($slug) {
             $cover = collect($bisnis['media'] ?? [])
                 ->firstWhere('type', 'image');
         @endphp
+        
 
-        <img
-            src="{{ $cover ? api_product_url($cover['file_path']) : '/images/assets/placeholder.png' }}"
-            class="w-full h-56 object-cover"
-        />
+        <div class="w-full aspect-[16/9]">
+            <img
+                src="{{ $cover ? api_product_url($cover['file_path']) : '/images/assets/placeholder.png' }}"
+                class="w-full h-full object-cover"
+            />
+        </div>
     </div>
 
     {{-- CONTENT --}}
@@ -195,9 +198,9 @@ mount(function ($slug) {
                 @endphp
 
                 {{-- HERO --}}
-                <div class="rounded-2xl overflow-hidden shadow-lg mb-8">
+                <div class="rounded-2xl overflow-hidden shadow-lg mb-8 aspect-[16/9]">
                     <img src="{{ $cover ? api_product_url($cover['file_path']) : '/images/assets/placeholder.png' }}"
-                         class="w-full h-80 object-cover">
+                        class="w-full h-full object-cover">
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
