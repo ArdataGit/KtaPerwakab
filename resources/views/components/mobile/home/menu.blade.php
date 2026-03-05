@@ -39,7 +39,7 @@
 
                 {{-- ICON --}}
                 <div class="bg-green-50 w-16 h-16 rounded-xl flex items-center justify-center shadow-sm">
-                    <img src="/images/assets/icon/{{ $icon }}.svg" class="w-7 h-7" alt="{{ $label }} icon">
+                    <img src="/images/assets/icon/new/{{ $icon }}.png" class="w-10 h-10" alt="{{ $label }} icon">
                 </div>
 
                 {{-- LABEL --}}

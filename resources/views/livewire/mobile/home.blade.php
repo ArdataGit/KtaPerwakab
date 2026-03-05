@@ -173,15 +173,15 @@ mount(function () {
         <!-- MENU -->
         @php
             $menuItems = [
-                ['icon' => 'struktur', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
-                ['icon' => 'Info', 'label' => 'TENTANG KAMI', 'route' => route('mobile.history')],
+                ['icon' => 'pengurus', 'label' => 'STRUKTUR ORGANISASI', 'route' => route('mobile.struktur-organisasi')],
+                ['icon' => 'tentangkami', 'label' => 'TENTANG KAMI', 'route' => route('mobile.history')],
                 ['icon' => 'artikel', 'label' => 'ARTIKEL', 'route' => route('mobile.articles')],
                 ['icon' => 'karya', 'label' => 'KARYA ', 'route' => route('mobile.karya.index')],
-                ['icon' => 'martketplace', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index')],
-                ['icon' => 'Info', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
+                ['icon' => 'umkm', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index')],
+                ['icon' => 'infoduka', 'label' => 'INFO DUKA', 'route' => route('mobile.info-duka.index')],
                 ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
                 ['icon' => 'donasi', 'label' => 'JEJAK HIDUP', 'route' => route('mobile.donation.jejak-hidup')],
-                ['icon' => 'karya', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
+                ['icon' => 'bisnis', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
             ];
 
             if (($user['role'] ?? 'publik') !== 'publik') {
@@ -336,38 +336,26 @@ mount(function () {
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @php
                                 $desktopMenus = [
-                                    ['icon' => 'document-text', 'label' => 'Artikel', 'route' => route('mobile.articles'), 'color' => 'green'],
-                                    ['icon' => 'color-swatch', 'label' => 'Karya', 'route' => route('mobile.karya.index'), 'color' => 'purple'],
-                                    ['icon' => 'shopping-cart', 'label' => 'UMKM', 'route' => route('mobile.marketplace.index'), 'color' => 'orange'],
-                                    ['icon' => 'speakerphone', 'label' => 'Info Duka', 'route' => route('mobile.info-duka.index'), 'color' => 'gray'],
-                                    ['icon' => 'user-group', 'label' => 'Pengurus', 'route' => route('mobile.struktur-organisasi'), 'color' => 'teal'],
-                                    ['icon' => 'heart', 'label' => 'Donasi', 'route' => route('mobile.donation.index'), 'color' => 'red'],
-                                    ['icon' => 'globe', 'label' => 'Jejak Hidup', 'route' => route('mobile.donation.jejak-hidup'), 'color' => 'emerald'],
-                                    ['icon' => 'briefcase', 'label' => 'Bisnis', 'route' => route('mobile.bisnis.explore'), 'color' => 'indigo'],
-                                    ['icon' => 'user-group', 'label' => 'Tentang Kami', 'route' => route('mobile.history'), 'color' => 'blue'],
+                                    ['icon' => 'artikel',      'label' => 'Artikel',       'route' => route('mobile.articles'),            'color' => 'green'],
+                                    ['icon' => 'karya',        'label' => 'Karya',         'route' => route('mobile.karya.index'),         'color' => 'purple'],
+                                    ['icon' => 'umkm',         'label' => 'UMKM',          'route' => route('mobile.marketplace.index'),   'color' => 'orange'],
+                                    ['icon' => 'infoduka',     'label' => 'Info Duka',     'route' => route('mobile.info-duka.index'),     'color' => 'gray'],
+                                    ['icon' => 'pengurus',     'label' => 'Pengurus',      'route' => route('mobile.struktur-organisasi'), 'color' => 'teal'],
+                                    ['icon' => 'donasi',       'label' => 'Donasi',        'route' => route('mobile.donation.index'),      'color' => 'red'],
+                                    ['icon' => 'donasi',       'label' => 'Jejak Hidup',   'route' => route('mobile.donation.jejak-hidup'),'color' => 'emerald'],
+                                    ['icon' => 'bisnis',       'label' => 'Bisnis',        'route' => route('mobile.bisnis.explore'),      'color' => 'indigo'],
+                                    ['icon' => 'tentangkami',  'label' => 'Tentang Kami',  'route' => route('mobile.history'),             'color' => 'blue'],
                                 ];
 
                                 if (($user['role'] ?? 'publik') !== 'publik') {
-                                    array_unshift($desktopMenus, ['icon' => 'home', 'label' => 'KTA', 'route' => route('mobile.kta'), 'color' => 'blue']);
+                                    array_unshift($desktopMenus, ['icon' => 'kta', 'label' => 'KTA', 'route' => route('mobile.kta'), 'color' => 'blue']);
                                 }
                             @endphp
                             
                             @foreach($desktopMenus as $menu)
                             <a href="{{ $menu['route'] }}" class="flex flex-col items-center p-4 rounded-xl border border-gray-100 hover:border-{{ $menu['color'] }}-300 hover:shadow-md hover:-translate-y-1 transition duration-200 bg-white group">
-                                <div class="bg-{{ $menu['color'] }}-50 text-{{ $menu['color'] }}-600 p-3 rounded-xl mb-3 group-hover:bg-{{ $menu['color'] }}-100 transition">
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        @if($menu['icon'] == 'home') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
-                                        @elseif($menu['icon'] == 'document-text') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        @elseif($menu['icon'] == 'color-swatch') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                        @elseif($menu['icon'] == 'shopping-cart') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                        @elseif($menu['icon'] == 'speakerphone') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-                                        @elseif($menu['icon'] == 'user-group') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                        @elseif($menu['icon'] == 'heart') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                        @elseif($menu['icon'] == 'globe') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        @elseif($menu['icon'] == 'briefcase') <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                        @endif
-                                    </svg>
-                                </div>
+                                    <img src="/images/assets/icon/new/{{ $menu['icon'] }}.png" class="w-12 h-12" alt="{{ $menu['label'] }} icon">
+                                
                                 <span class="text-sm font-semibold text-gray-700 whitespace-nowrap">{{ $menu['label'] }}</span>
                             </a>
                             @endforeach
