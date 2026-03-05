@@ -17,7 +17,9 @@ if ($active === 'struktur') $isActive = request()->routeIs('mobile.struktur-orga
 if ($active === 'karya') $isActive = request()->routeIs('mobile.karya*');
 if ($active === 'marketplace') $isActive = request()->routeIs('mobile.marketplace*') || request()->routeIs('mobile.my-products*');
 if ($active === 'bisnis') $isActive = request()->routeIs('mobile.bisnis*');
-if ($active === 'donation') $isActive = request()->routeIs('mobile.donation*');
+if ($active === 'donation') $isActive =
+    request()->routeIs('mobile.donation.index') ||
+    request()->routeIs('mobile.donation.show');
 if ($active === 'poin') $isActive = request()->routeIs('mobile.poin*');
 if ($active === 'history') $isActive = request()->routeIs('mobile.history');
 if ($active === 'profile') $isActive = request()->routeIs('mobile.profile*');
