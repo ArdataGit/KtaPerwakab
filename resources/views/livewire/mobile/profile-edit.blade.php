@@ -286,8 +286,8 @@ $submit = function () {
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                        <input type="email" value="{{ $email }}" disabled
-                                            class="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed">
+                                        <input type="email" value="{{ $email }}" 
+                                            class="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 border border-gray-200 text-black-500 ">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>

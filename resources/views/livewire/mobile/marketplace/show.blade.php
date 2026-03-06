@@ -11,8 +11,10 @@ state([
     'paymentMethods'  => [],
     'quantity'        => 1,
     'selectedMethod'  => '',
+    'customerEmail'   => '',
     'loading'         => false,
     'error'           => '',
+    'user'            => session('user') ?? [],
 ]);
 
 mount(function ($id) {
@@ -23,6 +25,9 @@ mount(function ($id) {
     } else {
         $this->product = null;
     }
+
+    // Default email dari session user
+    $this->customerEmail = session('user.email') ?? session('user')['email'] ?? '';
 
     // Ambil payment methods Tripay
     $tripay = TripayApiService::paymentMethods();
@@ -50,6 +55,7 @@ $checkout = function () {
         'product_id'     => $this->product['id'],
         'quantity'       => (int) $this->quantity,
         'payment_method' => $this->selectedMethod,
+        'customer_email' => $this->customerEmail ?: null,
     ]);
 
     $this->loading = false;
@@ -201,6 +207,20 @@ $checkout = function () {
                                     class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
                             </div>
 
+                            {{-- CUSTOMER INFO --}}
+                            <div class="bg-gray-50 rounded-xl px-4 py-3 space-y-2.5 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500 shrink-0">Nama</span>
+                                    <span class="font-medium text-gray-800 text-right">{{ $user['name'] ?? '-' }}</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-gray-500">Email</label>
+                                    <input type="email" wire:model="customerEmail"
+                                        placeholder="Email untuk pembayaran"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                                </div>
+                            </div>
+
                             {{-- SUBTOTAL --}}
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500">Subtotal</span>
@@ -341,6 +361,20 @@ $checkout = function () {
                                         <div class="flex justify-between items-center py-2 px-4 bg-green-50 rounded-xl">
                                             <span class="text-sm text-gray-600">Subtotal</span>
                                             <span class="font-bold text-green-700" x-text="'Rp ' + ({{ (float)$product['price'] }} * $wire.quantity).toLocaleString('id-ID')"></span>
+                                        </div>
+
+                                        {{-- CUSTOMER INFO --}}
+                                        <div class="bg-gray-50 rounded-xl px-4 py-3 space-y-3 text-sm">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-500">Nama</span>
+                                                <span class="font-medium text-gray-800">{{ $user['name'] ?? '-' }}</span>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="text-gray-500">Email</label>
+                                                <input type="email" wire:model="customerEmail"
+                                                    placeholder="Email untuk pembayaran"
+                                                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                                            </div>
                                         </div>
 
                                         <div>
