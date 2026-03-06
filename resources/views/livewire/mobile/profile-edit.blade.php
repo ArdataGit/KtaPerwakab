@@ -42,6 +42,7 @@ $submit = function () {
 
     $payload = [
         'name'      => $this->name,
+        'email'     => $this->email ?: null,
         'phone'     => $this->phone,
         'address'   => $this->address,
         'city'      => $this->city,
@@ -148,7 +149,7 @@ $submit = function () {
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" value="{{ $email }}"
+                        <input type="email" wire:model.defer="email" placeholder="Masukkan email"
                             class="w-full rounded-lg px-4 py-3 text-sm bg-white border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none">
                     </div>
 
@@ -286,8 +287,8 @@ $submit = function () {
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                        <input type="email" value="{{ $email }}" 
-                                            class="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 border border-gray-200 text-black-500 ">
+                                        <input type="email" wire:model.defer="email" placeholder="Masukkan email"
+                                            class="w-full rounded-xl px-4 py-3 text-sm bg-gray-50 border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
