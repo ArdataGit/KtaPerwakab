@@ -1,24 +1,78 @@
 <?php
 
 use App\Services\MarketplaceApiService;
+use App\Services\TripayApiService;
+use App\Services\UmkmTransactionApiService;
 use function Livewire\Volt\state;
 use function Livewire\Volt\mount;
 
 state([
-    'product' => null,
+    'product'         => null,
+    'paymentMethods'  => [],
+    'quantity'        => 1,
+    'selectedMethod'  => '',
+    'loading'         => false,
+    'error'           => '',
 ]);
 
 mount(function ($id) {
     $response = MarketplaceApiService::productDetail($id);
-
-    
 
     if ($response->successful()) {
         $this->product = $response->json('data');
     } else {
         $this->product = null;
     }
+
+    // Ambil payment methods Tripay
+    $tripay = TripayApiService::paymentMethods();
+    if ($tripay->successful()) {
+        $this->paymentMethods = $tripay->json('data') ?? [];
+    }
 });
+
+$checkout = function () {
+    $this->error = '';
+
+    if (!$this->selectedMethod) {
+        $this->error = 'Pilih metode pembayaran terlebih dahulu.';
+        return;
+    }
+
+    if ($this->quantity < 1) {
+        $this->error = 'Jumlah harus minimal 1.';
+        return;
+    }
+
+    $this->loading = true;
+
+    $response = UmkmTransactionApiService::checkout([
+        'product_id'     => $this->product['id'],
+        'quantity'       => (int) $this->quantity,
+        'payment_method' => $this->selectedMethod,
+    ]);
+
+    $this->loading = false;
+
+    if (!$response->successful()) {
+        $this->error = $response->json('error') ?? $response->json('message') ?? 'Checkout gagal, coba lagi.';
+        return;
+    }
+
+    $data = $response->json();
+
+    // Simpan ke session untuk halaman checkout
+    session([
+        'umkm_checkout_invoice'      => $data['invoice'],
+        'umkm_checkout_payment_url'  => $data['payment_url'],
+        'umkm_checkout_product_name' => $this->product['product_name'],
+        'umkm_checkout_quantity'     => $this->quantity,
+        'umkm_checkout_subtotal'     => $this->product['price'] * $this->quantity,
+        'umkm_checkout_method'       => $this->selectedMethod,
+    ]);
+
+    $this->redirect(route('mobile.marketplace.checkout'), navigate: true);
+};
 ?>
 
 @php
@@ -111,12 +165,8 @@ mount(function ($id) {
                     @endif
                 </div>
 
-                {{-- FOOTER CARD (PESAN SEKARANG) --}}
-                @php
-                    $wa = preg_replace('/[^0-9]/', '', data_get($product, 'umkm.contact_wa'));
-                @endphp
-
-                <div class="border-t p-4 flex items-center space-x-3">
+                {{-- FOOTER CARD --}}
+                <div class="border-t p-4 flex items-center space-x-3" x-data="{ open: false }">
                     <div class="flex-1">
                         <p class="text-xs text-gray-500">Harga</p>
                         <p class="text-green-600 font-bold">
@@ -124,14 +174,66 @@ mount(function ($id) {
                         </p>
                     </div>
 
-                    <a href="https://wa.me/{{ $wa }}" target="_blank"
-                        class="bg-green-600 text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center space-x-2">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M20.52 3.48A11.92 11.92 0 0012.05 0C5.43 0 0 5.43 0 12.05c0 2.12.55 4.19 1.6 6.02L0 24l6.12-1.58a11.98 11.98 0 005.93 1.52h.01c6.62 0 12.05-5.43 12.05-12.05 0-3.22-1.25-6.24-3.54-8.41z" />
-                        </svg>
-                        <span>Pesan Sekarang</span>
-                    </a>
+                    <button @click="open = true"
+                        class="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm">
+                        Beli Sekarang
+                    </button>
+
+                    {{-- MODAL CHECKOUT --}}
+                    <div x-show="open" x-cloak
+                        class="fixed inset-0 z-50 flex items-end justify-center"
+                        @click.self="open = false">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                        <div class="relative w-full max-w-md bg-white rounded-t-2xl p-6 space-y-4 z-10">
+                            <h3 class="text-base font-bold text-gray-800">Order Produk</h3>
+
+                            {{-- ERROR --}}
+                            @if($error)
+                                <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-xl">
+                                    {{ $error }}
+                                </div>
+                            @endif
+
+                            {{-- QTY --}}
+                            <div>
+                                <label class="text-sm font-medium text-gray-700 mb-1 block">Jumlah</label>
+                                <input type="number" wire:model="quantity" min="1"
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                            </div>
+
+                            {{-- SUBTOTAL --}}
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">Subtotal</span>
+                                <span class="font-bold text-green-600" x-text="'Rp ' + ({{ (float)$product['price'] }} * $wire.quantity).toLocaleString('id-ID')"></span>
+                            </div>
+
+                            {{-- PAYMENT METHOD --}}
+                            <div>
+                                <label class="text-sm font-medium text-gray-700 mb-1 block">Metode Pembayaran</label>
+                                <select wire:model="selectedMethod"
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+                                    <option value="">Pilih metode...</option>
+                                    @foreach ($paymentMethods as $pm)
+                                        <option value="{{ $pm['code'] }}">{{ $pm['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- BUTTONS --}}
+                            <div class="flex gap-3 pt-2">
+                                <button @click="open = false"
+                                    class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold text-sm">
+                                    Batal
+                                </button>
+                                <button wire:click="checkout"
+                                    :disabled="$wire.loading"
+                                    class="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold text-sm disabled:opacity-60">
+                                    <span x-show="!$wire.loading">Lanjutkan</span>
+                                    <span x-show="$wire.loading">Memproses...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -209,15 +311,63 @@ mount(function ($id) {
                                 </a>
                             @endif
 
-                            @php
-                                $wa = preg_replace('/[^0-9]/', '', data_get($product, 'umkm.contact_wa'));
-                            @endphp
+                            {{-- DESKTOP CHECKOUT MODAL --}}
+                            <div x-data="{ open: false }">
+                                <button @click="open = true"
+                                    class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-base transition shadow-md shadow-green-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Beli Sekarang
+                                </button>
 
-                            <a href="https://wa.me/{{ $wa }}" target="_blank"
-                                class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-semibold text-base transition shadow-md shadow-green-200">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A11.92 11.92 0 0012.05 0C5.43 0 0 5.43 0 12.05c0 2.12.55 4.19 1.6 6.02L0 24l6.12-1.58a11.98 11.98 0 005.93 1.52h.01c6.62 0 12.05-5.43 12.05-12.05 0-3.22-1.25-6.24-3.54-8.41z"/></svg>
-                                Pesan Sekarang
-                            </a>
+                                <div x-show="open" x-cloak
+                                    class="fixed inset-0 z-50 flex items-center justify-center"
+                                    @click.self="open = false">
+                                    <div class="absolute inset-0 bg-black/40"></div>
+                                    <div class="relative bg-white rounded-2xl shadow-xl p-8 w-full max-w-md z-10 space-y-5">
+                                        <h3 class="text-lg font-bold text-gray-900">Order Produk</h3>
+
+                                        @if($error)
+                                            <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
+                                                {{ $error }}
+                                            </div>
+                                        @endif
+
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700 block mb-1">Jumlah</label>
+                                            <input type="number" wire:model="quantity" min="1"
+                                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                                        </div>
+
+                                        <div class="flex justify-between items-center py-2 px-4 bg-green-50 rounded-xl">
+                                            <span class="text-sm text-gray-600">Subtotal</span>
+                                            <span class="font-bold text-green-700" x-text="'Rp ' + ({{ (float)$product['price'] }} * $wire.quantity).toLocaleString('id-ID')"></span>
+                                        </div>
+
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700 block mb-1">Metode Pembayaran</label>
+                                            <select wire:model="selectedMethod"
+                                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+                                                <option value="">Pilih metode...</option>
+                                                @foreach ($paymentMethods as $pm)
+                                                    <option value="{{ $pm['code'] }}">{{ $pm['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="flex gap-3 pt-2">
+                                            <button @click="open = false"
+                                                class="flex-1 border border-gray-200 text-gray-600 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+                                                Batal
+                                            </button>
+                                            <button wire:click="checkout" :disabled="$wire.loading"
+                                                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition shadow-md shadow-green-200 disabled:opacity-60">
+                                                <span x-show="!$wire.loading">Lanjutkan Pembayaran</span>
+                                                <span x-show="$wire.loading">Memproses...</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 @endif

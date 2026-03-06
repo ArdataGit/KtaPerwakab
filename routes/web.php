@@ -154,9 +154,25 @@ Route::middleware('mobile.auth')->group(function () {
     Volt::route('/marketplace', 'mobile.marketplace.index')
         ->name('mobile.marketplace.index');
 
+    // Marketplace Checkout (harus SEBELUM wildcard {id})
+    Volt::route('/marketplace/checkout', 'mobile.marketplace.checkout')
+        ->name('mobile.marketplace.checkout');
+
     // Marketplace Detail Produk
     Volt::route('/marketplace/{id}', 'mobile.marketplace.show')
         ->name('mobile.marketplace.show');
+
+    // My Orders (Riwayat Transaksi Pembeli)
+    Volt::route('/my-orders', 'mobile.marketplace.my-orders')
+        ->name('mobile.marketplace.my-orders');
+
+    Volt::route('/my-orders/{id}', 'mobile.marketplace.order-detail')
+        ->name('mobile.marketplace.order-detail');
+
+    // UMKM Sales (Statistik Penjualan)
+    Volt::route('/umkm-sales', 'mobile.marketplace.umkm-sales')
+        ->name('mobile.marketplace.umkm-sales');
+
 
     // Karya
     Volt::route('/karya', 'mobile.karya.index')

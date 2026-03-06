@@ -182,6 +182,7 @@ mount(function () {
                 ['icon' => 'donasi', 'label' => 'DONASI', 'route' => route('mobile.donation.index')],
                 ['icon' => 'donasi', 'label' => 'JEJAK HIDUP', 'route' => route('mobile.donation.jejak-hidup')],
                 ['icon' => 'bisnis', 'label' => 'BISNIS', 'route' => route('mobile.bisnis.explore')],
+                ['icon' => 'poin', 'label' => 'POIN', 'route' => route('mobile.poin.index')],
             ];
 
             if (($user['role'] ?? 'publik') !== 'publik') {
@@ -342,9 +343,10 @@ mount(function () {
                                     ['icon' => 'infoduka',     'label' => 'Info Duka',     'route' => route('mobile.info-duka.index'),     'color' => 'gray'],
                                     ['icon' => 'pengurus',     'label' => 'Pengurus',      'route' => route('mobile.struktur-organisasi'), 'color' => 'teal'],
                                     ['icon' => 'donasi',       'label' => 'Donasi',        'route' => route('mobile.donation.index'),      'color' => 'red'],
-                                    ['icon' => 'donasi',       'label' => 'Jejak Hidup',   'route' => route('mobile.donation.jejak-hidup'),'color' => 'emerald'],
+                                    ['icon' => 'jejakhidup',       'label' => 'Jejak Hidup',   'route' => route('mobile.donation.jejak-hidup'),'color' => 'emerald'],
                                     ['icon' => 'bisnis',       'label' => 'Bisnis',        'route' => route('mobile.bisnis.explore'),      'color' => 'indigo'],
                                     ['icon' => 'tentangkami',  'label' => 'Tentang Kami',  'route' => route('mobile.history'),             'color' => 'blue'],
+                                    ['icon' => 'poin',         'label' => 'Poin',          'route' => route('mobile.poin.index'),          'color' => 'blue'],
                                 ];
 
                                 if (($user['role'] ?? 'publik') !== 'publik') {

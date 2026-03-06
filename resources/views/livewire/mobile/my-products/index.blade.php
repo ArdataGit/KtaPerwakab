@@ -72,11 +72,20 @@ $deleteProduct = function ($id) {
             </button>
             <p class="text-white font-semibold text-base">Produk Saya</p>
         </div>
-        <a href="{{ route('mobile.my-products.create') }}" class="bg-white text-green-600 rounded-full p-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
-            </svg>
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('mobile.marketplace.umkm-sales') }}"
+                class="bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Penjualan
+            </a>
+            <a href="{{ route('mobile.my-products.create') }}" class="bg-white text-green-600 rounded-full p-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+                </svg>
+            </a>
+        </div>
     </div>
 
     <div class="px-4 mt-4 space-y-4">
@@ -178,10 +187,19 @@ $deleteProduct = function ($id) {
                         <h1 class="text-3xl font-bold text-gray-900">Produk Saya</h1>
                         <p class="text-gray-500 mt-1">Kelola produk UMKM yang Anda jual.</p>
                     </div>
-                    <a href="{{ route('mobile.my-products.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md shadow-green-200 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-                        Tambah Produk
-                    </a>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('mobile.marketplace.umkm-sales') }}"
+                            class="border border-green-600 text-green-600 hover:bg-green-50 px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Penjualan Saya
+                        </a>
+                        <a href="{{ route('mobile.my-products.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md shadow-green-200 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                            Tambah Produk
+                        </a>
+                    </div>
                 </div>
 
                 <div class="mb-6">
