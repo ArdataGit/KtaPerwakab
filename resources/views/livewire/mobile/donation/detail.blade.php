@@ -277,7 +277,7 @@ $submit = function () {
                 @if ($payment_type === 'tripay')
                 <div>
                     <p class="text-sm font-semibold text-gray-800 mb-2">
-                        Pilih Metode Tripay
+                        Pilih Metode Pembayaran
                     </p>
                     <select
                       wire:model="payment_method"
@@ -466,7 +466,7 @@ $submit = function () {
                                         {{-- TRIPAY: Dropdown --}}
                                         @if ($payment_type === 'tripay')
                                         <div>
-                                            <p class="text-sm font-semibold text-gray-800 mb-2">Pilih Metode Tripay</p>
+                                            <p class="text-sm font-semibold text-gray-800 mb-2">Pilih Metode Pembayaran</p>
                                             <select wire:model="payment_method"
                                                 class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-0 transition">
                                                 <option value="">-- Pilih --</option>
