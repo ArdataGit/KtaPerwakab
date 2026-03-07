@@ -217,7 +217,7 @@ mount(function () {
     <!-- FLOATING WHATSAPP BUTTON -->
     <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none flex justify-end px-4"
          style="width: min(100vw, 420px);">
-            <a href="https://wa.me/628567895905" target="_blank"
+            <a href="https://wa.me/6282311816600" target="_blank"
             class="pointer-events-auto bg-white text-[#25D366] p-3 rounded-full shadow-lg hover:bg-gray-100 transition-transform hover:scale-105 flex items-center justify-center border border-gray-100">
                 <img src="images/assets/icon/whatsapp.svg" 
                     alt="WhatsApp" 

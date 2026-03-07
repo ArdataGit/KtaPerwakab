@@ -274,7 +274,7 @@ $submit = function () {
                         Klik tombol di bawah untuk menghubungi admin via WhatsApp
                     </p>
 
-                    <a href="https://wa.me/6281234567890?text=Halo%20Admin%2C%20saya%20ingin%20reset%20password"
+                    <a href="https://wa.me/6282311816600?text=Halo%20Admin%2C%20saya%20ingin%20reset%20password"
                        target="_blank"
                        class="block w-full bg-green-500 text-white py-3 rounded-lg font-medium text-center">
                         Chat Admin via WhatsApp
@@ -403,7 +403,7 @@ $submit = function () {
                             <p class="text-gray-500">Klik tombol di bawah untuk menghubungi admin melalui WhatsApp dan meminta reset password.</p>
                         </div>
 
-                        <a href="https://wa.me/6281234567890?text=Halo%20Admin%2C%20saya%20ingin%20reset%20password" target="_blank"
+                        <a href="https://wa.me/6282311816600?text=Halo%20Admin%2C%20saya%20ingin%20reset%20password" target="_blank"
                             class="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition shadow-lg shadow-green-200 text-center block">
                             Chat Admin via WhatsApp
                         </a>
