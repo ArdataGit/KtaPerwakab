@@ -1,3 +1,22 @@
+<?php
+
+use App\Services\RekeningIuranApiService;
+use function Livewire\Volt\state;
+use function Livewire\Volt\mount;
+
+state([
+    'rekening' => null,
+]);
+
+mount(function () {
+    $response = RekeningIuranApiService::first();
+
+    if ($response->successful()) {
+        $this->rekening = $response->json();
+    }
+});
+?>
+
 <x-layouts.mobile title="Metode Pembayaran Tunai">
 
     {{-- HEADER --}}
@@ -23,17 +42,17 @@
 
                 <div class="flex justify-between">
                     <span>Bank Tujuan</span>
-                    <span class="font-medium">Bank Central Asia</span>
+                    <span class="font-medium">{{ $rekening['nama_bank'] ?? '-' }}</span>
                 </div>
 
                 <div class="flex justify-between">
                     <span>Nomor Rekening</span>
-                    <span class="font-medium">1234 567 890</span>
+                    <span class="font-medium">{{ $rekening['nomor_rekening'] ?? '-' }}</span>
                 </div>
 
                 <div class="flex justify-between">
                     <span>Atas Nama</span>
-                    <span class="font-medium">Joko Adiwinansa</span>
+                    <span class="font-medium">{{ $rekening['nama_pemilik'] ?? '-' }}</span>
                 </div>
 
                 <div class="flex justify-between">
@@ -94,11 +113,11 @@
                                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center p-2">
-                                            <span class="font-bold text-blue-800 text-xs">BCA</span>
+                                            <span class="font-bold text-blue-800 text-xs">{{ strtoupper(substr($rekening['nama_bank'] ?? 'BNK', 0, 3)) }}</span>
                                         </div>
                                         <div>
                                             <p class="text-sm text-gray-500">Bank Tujuan</p>
-                                            <p class="font-bold text-gray-900">Bank Central Asia</p>
+                                            <p class="font-bold text-gray-900">{{ $rekening['nama_bank'] ?? '-' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -106,12 +125,12 @@
                                 <div class="grid grid-cols-2 gap-6">
                                     <div class="p-4 border border-gray-100 rounded-xl bg-white">
                                         <p class="text-sm text-gray-500 mb-1">Nomor Rekening</p>
-                                        <p class="text-lg font-bold text-gray-900 tracking-wide">1234 567 890</p>
+                                        <p class="text-lg font-bold text-gray-900 tracking-wide">{{ $rekening['nomor_rekening'] ?? '-' }}</p>
                                     </div>
                                     
                                     <div class="p-4 border border-gray-100 rounded-xl bg-white">
                                         <p class="text-sm text-gray-500 mb-1">Atas Nama</p>
-                                        <p class="text-base font-bold text-gray-900">Joko Adiwinansa</p>
+                                        <p class="text-base font-bold text-gray-900">{{ $rekening['nama_pemilik'] ?? '-' }}</p>
                                     </div>
                                 </div>
 
