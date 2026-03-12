@@ -21,7 +21,7 @@
 
     <!-- Floating WhatsApp Button Desktop -->
     <div class="fixed z-[9999] flex justify-end" style="right: 4rem; top: 37rem;">
-        <a href="https://wa.me/6282311816600" target="_blank"
+        <a href="https://wa.me/6282112272008" target="_blank"
             class="bg-white text-[#25D366] px-5 py-3 rounded-full shadow-xl hover:bg-gray-50 transition-transform hover:scale-105 flex items-center justify-center border border-gray-100 gap-3 relative group cursor-pointer">
             <span class="font-bold text-gray-800 text-sm">Hubungi Kami!</span>
             <img src="/images/assets/icon/whatsapp.svg" 
