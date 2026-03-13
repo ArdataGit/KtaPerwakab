@@ -247,7 +247,9 @@ $submit = function () {
             'kelurahan' => $this->kelurahan,
             'occupation' => $this->occupation === 'lain_lain' ? $this->occupation_other : $this->occupation,
             'role' => $this->role,
-            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes') ? $this->kta_id : null,
+            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes' && $this->kta_id) 
+                ? (str_starts_with($this->kta_id, 'KB-') ? $this->kta_id : 'KB-' . $this->kta_id) 
+                : null,
         ];
 
         $files = $this->profile_photo instanceof \Illuminate\Http\UploadedFile
@@ -470,7 +472,7 @@ $submit = function () {
                 @elseif($step === 4)
 
     <h2 class="text-xl font-bold text-center mb-2 text-gray-800">
-        Sudah Punya KTA?
+        Sudah Menjadi Anggota Sebelumnya?
     </h2>
 
     <p class="text-center text-sm text-gray-500 mb-6">
@@ -500,7 +502,7 @@ $submit = function () {
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-gray-800">Saya sudah memiliki KTA</h3>
+                    <h3 class="font-semibold text-gray-800">SAYA SUDAH MENJADI ANGGOTA</h3>
                     <p class="text-sm text-gray-500 mt-1">
                         Masukkan nomor KTA untuk diverifikasi sistem.
                     </p>
@@ -529,7 +531,7 @@ $submit = function () {
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-gray-800">Saya belum memiliki KTA</h3>
+                    <h3 class="font-semibold text-gray-800">SAYA INGIN MENDAFTAR ANGGOTA BARU</h3>
                     <p class="text-sm text-gray-500 mt-1">
                         Nomor KTA akan dibuat otomatis setelah registrasi berhasil.
                     </p>
@@ -546,6 +548,7 @@ $submit = function () {
                 wire:model="kta_id"
                 placeholder="Masukkan nomor KTA Anda"
                 label="Nomor KTA"
+                prefix="KB-"
             />
             @error('kta_id')
                 <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -833,26 +836,29 @@ $submit = function () {
                     {{-- STEP 4: KTA --}}
                     @elseif($step === 4)
                         <div class="space-y-5">
-                            <h3 class="text-xl font-bold text-center text-gray-800">Sudah Punya KTA?</h3>
+                            <h3 class="text-xl font-bold text-center text-gray-800">Sudah Menjadi Anggota Sebelumnya?</h3>
                             <p class="text-center text-sm text-gray-500">Pilih salah satu opsi berikut</p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                 <div wire:click="$set('has_kta', 'yes')" class="cursor-pointer border-2 rounded-xl p-5 transition hover:shadow-md {{ $has_kta === 'yes' ? 'border-green-600 bg-green-50' : 'border-gray-200 bg-white hover:border-green-400' }}">
                                     <div class="flex items-start gap-3">
                                         <div class="mt-1"><div class="w-5 h-5 rounded-full border-2 flex items-center justify-center {{ $has_kta === 'yes' ? 'border-green-600' : 'border-gray-400' }}">@if($has_kta === 'yes')<div class="w-2.5 h-2.5 bg-green-600 rounded-full"></div>@endif</div></div>
-                                        <div><h4 class="font-semibold text-gray-800">Saya sudah memiliki KTA</h4><p class="text-sm text-gray-500 mt-1">Masukkan nomor KTA untuk diverifikasi.</p></div>
+                                        <div><h4 class="font-semibold text-gray-800">SAYA SUDAH MENJADI ANGGOTA</h4><p class="text-sm text-gray-500 mt-1">Masukkan nomor KTA untuk diverifikasi.</p></div>
                                     </div>
                                 </div>
                                 <div wire:click="$set('has_kta', 'no')" class="cursor-pointer border-2 rounded-xl p-5 transition hover:shadow-md {{ $has_kta === 'no' ? 'border-green-600 bg-green-50' : 'border-gray-200 bg-white hover:border-green-400' }}">
                                     <div class="flex items-start gap-3">
                                         <div class="mt-1"><div class="w-5 h-5 rounded-full border-2 flex items-center justify-center {{ $has_kta === 'no' ? 'border-green-600' : 'border-gray-400' }}">@if($has_kta === 'no')<div class="w-2.5 h-2.5 bg-green-600 rounded-full"></div>@endif</div></div>
-                                        <div><h4 class="font-semibold text-gray-800">Saya belum memiliki KTA</h4><p class="text-sm text-gray-500 mt-1">Nomor KTA akan dibuat otomatis.</p></div>
+                                        <div><h4 class="font-semibold text-gray-800">SAYA INGIN MENDAFTAR ANGGOTA BARU</h4><p class="text-sm text-gray-500 mt-1">Nomor KTA akan dibuat otomatis.</p></div>
                                     </div>
                                 </div>
                             </div>
                             @if($has_kta === 'yes')
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2">Nomor KTA</label>
-                                    <input wire:model="kta_id" type="text" placeholder="Masukkan nomor KTA Anda" class="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm transition">
+                                    <div class="relative flex items-center">
+                                        <div class="absolute left-4 font-semibold text-gray-500 pointer-events-none">KB-</div>
+                                        <input wire:model="kta_id" type="text" placeholder="Masukkan nomor KTA Anda" class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 outline-none text-sm transition">
+                                    </div>
                                     @error('kta_id')<p class="text-red-600 text-xs mt-1">{{ $message }}</p>@enderror
                                 </div>
                             @endif

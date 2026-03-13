@@ -3,6 +3,7 @@
     'type' => 'text',
     'invalid' => false,
     'errorMessage' => null,
+    'prefix' => null,
 ])
 
 @php
@@ -28,13 +29,19 @@
     @endif
 
     {{-- INPUT WRAPPER --}}
-    <div class="relative">
+    <div class="relative flex items-center">
+        @if ($prefix)
+            <div class="absolute left-4 z-10 font-semibold text-gray-500 pointer-events-none">
+                {{ $prefix }}
+            </div>
+        @endif
 
         <input
             :type="{{ $isPassword ? 'show ? \'text\' : \'password\'' : '\'' . $type . '\'' }}"
             {{ $attributes->merge([
                 'class' =>
-                    'w-full px-4 py-3 my-3 rounded-xl border text-base transition focus:outline-none pr-12 ' .
+                    'w-full py-3 my-3 rounded-xl border text-base transition focus:outline-none pr-12 ' .
+                    ($prefix ? 'pl-12 ' : 'px-4 ') .
                     ($invalid
                         ? 'border-red-500 bg-red-50'
                         : 'border-gray-300 bg-white focus:border-green-500')

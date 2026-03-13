@@ -52,6 +52,26 @@ $submit = function () {
         return;
     }
 
+    // 🔍 Cek apakah sudah ada iuran yang menggantung (khusus iuran pendaftaran)
+    $isFirstIuran = ($this->user['role'] ?? null) === 'anggota' && is_null($this->user['expired_at'] ?? null);
+    if ($isFirstIuran) {
+        $feesRes = MembershipFeeApiService::myFees($this->token);
+        if ($feesRes->successful()) {
+            $fees = $feesRes->json('data') ?? [];
+            // Cari iuran yang belum sukses (pending / waiting verification)
+            $pendingFee = collect($fees)->firstWhere('payment_status', '!=', 'success');
+
+            if ($pendingFee) {
+                session([
+                    'membership_fee_id'     => $pendingFee['id'],
+                    'membership_fee_amount' => $pendingFee['amount'] ?? $amount,
+                ]);
+                $this->redirect('/iuran/metode', navigate: true);
+                return;
+            }
+        }
+    }
+
     // 🚀 Call API
     $response = MembershipFeeApiService::create($this->token, $amount);
 
