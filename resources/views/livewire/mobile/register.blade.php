@@ -137,7 +137,9 @@ $nextStep = function () {
     $this->formErrors = [];
     $rules = $this->getValidationRulesForStep($this->step);
     try {
-        $this->validate($rules);
+        if (!empty($rules)) {
+            $this->validate($rules);
+        }
         if ($this->step < ($this->role === 'publik' ? 3 : 4)) {
             $this->step++;
         }
@@ -166,7 +168,7 @@ $getValidationRulesForStep = function ($step) {
         'kelurahan' => 'required|string',
         'birth_date' => 'required|date',
         'occupation' => 'required|string',
-        'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'profile_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ];
 
     if ($step === 1) {
@@ -426,7 +428,7 @@ $submit = function () {
                     <!-- Foto Profil -->
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-800 mb-2">Foto Profil</label>
-                        <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                        <label class="relative overflow-hidden flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                 <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-5 4h.01M12 20h.01"/>
@@ -434,7 +436,17 @@ $submit = function () {
                                 <p class="text-sm text-gray-600">Klik untuk upload foto</p>
                                 <p class="text-xs text-gray-400 mt-1">JPG / PNG (maks. 2MB)</p>
                             </div>
-                            <input type="file" class="hidden" accept="image/*" wire:model.defer="profile_photo"
+                            
+                            <!-- Loading Overlay overlay -->
+                            <div wire:loading wire:target="profile_photo" class="absolute inset-0 bg-white/80 rounded-xl flex flex-col items-center justify-center z-10 transition-all">
+                                <svg class="animate-spin h-8 w-8 text-green-600 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <p class="text-xs font-semibold text-green-700">Mengunggah (Tunggu Sebentar)...</p>
+                            </div>
+
+                            <input type="file" class="hidden" accept="image/*" wire:model="profile_photo"
                                    x-on:change="
                                        $wire.photo_preview = '';
                                        if ($event.target.files[0]) {
@@ -792,11 +804,21 @@ $submit = function () {
                             @endif
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Foto Profil <span class="text-red-500">*</span></label>
-                                <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                <label class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition overflow-hidden">
                                     <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4a1 1 0 011-1h8a1 1 0 011 1v12m-5 4h.01M12 20h.01"/></svg>
                                     <p class="text-sm text-gray-600">Klik untuk upload foto</p>
                                     <p class="text-xs text-gray-400 mt-1">JPG / PNG (maks. 2MB)</p>
-                                    <input type="file" class="hidden" accept="image/*" wire:model.defer="profile_photo"
+
+                                    <!-- Loading Overlay overlay -->
+                                    <div wire:loading wire:target="profile_photo" class="absolute inset-0 bg-white/80 rounded-xl flex flex-col items-center justify-center z-10 transition-all">
+                                        <svg class="animate-spin h-8 w-8 text-green-600 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <p class="text-xs font-semibold text-green-700">Mengunggah (Tunggu Sebentar)...</p>
+                                    </div>
+
+                                    <input type="file" class="hidden" accept="image/*" wire:model="profile_photo"
                                         x-on:change="$wire.photo_preview = ''; if ($event.target.files[0]) { let reader = new FileReader(); reader.onload = (e) => $wire.set('photo_preview', e.target.result); reader.readAsDataURL($event.target.files[0]); }"/>
                                 </label>
                                 <template x-if="$wire.photo_preview">
