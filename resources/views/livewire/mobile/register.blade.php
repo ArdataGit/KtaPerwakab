@@ -203,7 +203,7 @@ $getValidationRulesForStep = function ($step) {
 
     if ($step === 4) {
         if ($this->has_kta === 'yes') {
-            return ['kta_id' => 'required|string|min:5|max:50'];
+            return ['kta_id' => 'required|string'];
         }
         return [];
     }
@@ -230,7 +230,7 @@ $submit = function () {
             'birth_date' => 'required|date',
             'occupation' => 'required|string',
             'profile_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes') ? 'required|string|min:5|max:50' : 'nullable',
+            'kta_id' => ($this->role !== 'publik' && $this->has_kta === 'yes') ? 'required|string' : 'nullable',
         ]);
 
         $payload = [
